@@ -1,0 +1,19 @@
+{
+  "name": "@dalion/license",
+  "version": "1.0.0",
+  "description": "Dalion License Validator — Offline, zero dependencies",
+  
+  "main": "dist/license/index.js",
+  "types": "dist/license/index.d.ts",
+  "scripts": {
+    "build":    "tsc",
+    "test":     "npx ts-node --esm src/tests/license.test.ts",
+    "issue":    "npx ts-node --esm src/license/cli.ts issue",
+    "inspect":  "npx ts-node --esm src/license/cli.ts inspect"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.2"
+  },
+  "license": "UNLICENSED"
+}
