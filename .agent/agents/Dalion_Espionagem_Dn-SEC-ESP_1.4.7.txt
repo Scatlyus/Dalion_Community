@@ -1,0 +1,150 @@
+agent:
+  name: "Dalion_Espionagem_Contraespionagem"
+  code: "Dn-SEC-ESP"
+  version: "1.4.7"
+  author: "Cristiano Monteiro Rita"
+  license: "Proprietary"
+  extends: "dnabase_core@2.0.0"
+  role: "Agente de Enriquecimento Tático e Contraespionagem Cibernética"
+  status: "active"
+
+  description: >
+    Detecta, valida e enriquece Indicadores de Comprometimento (IoCs) anômalos
+    para antecipação de APTs e ações furtivas, com priorização de fontes,
+    categorização contextual, verificação de conformidade e introspecção automatizada.
+
+  capabilities:
+    - inteligencia_ioc_multifonte
+    - previsao_apts
+    - reconciliacao_de_conflitos
+    - conformidade_cibernetica
+    - introspeccao_e_melhoria_continua
+
+  mission_profile: >
+    Ideal para operações de threat hunting, SOC tático e análise de ameaças persistentes avançadas.
+
+interface_io:
+  inputs:
+    iocs:
+      type: array
+      description: Lista de IoCs com flag de anomalia.
+      items:
+        type: object
+        required: [ioc_type, ioc_value, is_anomaly]
+        properties:
+          ioc_type: { type: string, enum: [IP, domain, URL, file_hash, CVE_ID] }
+          ioc_value: { type: string }
+          is_anomaly: { type: boolean }
+      examples:
+        - { ioc_type: "IP", ioc_value: "10.0.0.1", is_anomaly: true }
+
+    sources_priority:
+      type: array
+      items:
+        type: string
+        enum: [VirusTotal, AbuseIPDB, Whois, Talos, URLScan, AlienVault, OTX_AlienVault, Shodan, MITRE_ATTACK]
+
+    conflict_strategy:
+      type: string
+      default: hybrid_weighted
+      enum: [consensus, reputation, recency, hybrid_weighted]
+
+    analysis_depth:
+      type: string
+      default: medium
+      enum: [light, medium, deep]
+
+  outputs:
+    enriched_iocs:
+      type: array
+      items:
+        type: object
+        required: [ioc_type, ioc_value, reputation_score, threat_score, status]
+        properties:
+          ioc_type: { type: string }
+          ioc_value: { type: string }
+          reputation_score: { type: number, minimum: -1, maximum: 1 }
+          threat_score: { type: number, minimum: 0, maximum: 100 }
+          category: { type: string }
+          links:
+            type: array
+            items: { type: string, format: uri }
+          raw_data_summary: { type: object }
+          resolution: 
+            type: object
+            properties:
+              strategy: { type: string }
+              notes: { type: string }
+          last_updated: { type: string, format: date-time }
+          status: { type: string, enum: [SUCCESS, PARTIAL_INFO, NO_INFO, ERROR, CONFLICT_RESOLVED] }
+
+    summary_report: { type: string }
+    compliance_status: { type: string }
+    audit_id: { type: string }
+    self_reflection: { type: string }
+
+modules:
+  - name: ioc_validator; version: "1.0.0"
+  - name: source_prioritizer; version: "1.1.0"
+  - name: vt_client; version: "3.2.1"
+  - name: abuseipdb_client; version: "2.5.0"
+  - name: whois_client; version: "2.0.0"
+  - name: talos_client; version: "1.0.0"
+  - name: urlscan_client; version: "1.0.0"
+  - name: alienvault_otx_client; version: "1.0.0"
+  - name: shodan_client; version: "1.0.0"
+  - name: mitre_attack_mapper; version: "1.0.0"
+  - name: data_aggregator; version: "1.0.0"
+  - name: conflict_resolver; version: "1.2.0"
+  - name: threat_categorizer; version: "1.0.0"
+  - name: relevance_scorer; version: "1.0.0"
+  - name: history_comparator; version: "1.0.0"
+  - name: summary_generator; version: "1.0.0"
+  - name: compliance_engine; version: "1.0.0"
+  - name: json_exporter; version: "1.0.0"
+  - name: self_reflection; version: "1.0.0"
+  - name: error_handler; version: "1.0.0"
+
+dependencies:
+  - name: DNABase
+    version: "2.0.0-tier5-alpha"
+    source: "dnabase_core.yaml"
+  - name: Dalion_Inteligencia_Campo
+    version_range: ">=1.0.0,<2.0.0"
+  - name: Dalion_Artilharia
+    version_range: ">=1.5.0,<2.0.0"
+  - name: Dalion_Engenharia_Desenvolvimento
+    version_range: ">=1.0.0,<2.0.0"
+
+workflow:
+  - name: validar_filtrar_iocs
+    steps:
+      - run: ioc_validator
+      - filter: item.is_anomaly
+
+  - name: enriquecer_anomalias
+    loop_over: filtered_iocs
+    parallel:
+      - vt_client
+      - abuseipdb_client
+      - whois_client
+      - talos_client
+      - urlscan_client
+      - alienvault_otx_client
+      - shodan_client
+      - mitre_attack_mapper
+    steps:
+      - run: data_aggregator
+      - if: data_aggregator.has_conflict
+        then: run conflict_resolver
+      - run: threat_categorizer
+      - run: relevance_scorer
+      - run: history_comparator
+      - run: json_exporter
+
+  - name: relatorio_final
+    steps:
+      - run: summary_generator
+      - run: compliance_engine
+      - run: self_reflection
+      - run: error_handler

@@ -1,0 +1,82 @@
+[
+    {
+        "id": "LAB-001",
+        "ioc_type": "domain",
+        "ioc_value": "microsoft-security-verify.com",
+        "label": "malicious",
+        "context": {
+            "scenario": "Phishing",
+            "technique": "T1566.002"
+        }
+    },
+    {
+        "id": "LAB-002",
+        "ioc_type": "IP",
+        "ioc_value": "193.163.125.138",
+        "label": "malicious",
+        "context": {
+            "scenario": "Bruteforce/Scanner",
+            "technique": "T1110"
+        }
+    },
+    {
+        "id": "LAB-003",
+        "ioc_type": "domain",
+        "ioc_value": "google.com",
+        "label": "clean",
+        "context": {
+            "scenario": "Baseline",
+            "technique": "None"
+        }
+    },
+    {
+        "id": "LAB-004",
+        "ioc_type": "IP",
+        "ioc_value": "8.8.8.8",
+        "label": "clean",
+        "context": {
+            "scenario": "Baseline",
+            "technique": "None"
+        }
+    },
+    {
+        "id": "LAB-005",
+        "ioc_type": "domain",
+        "ioc_value": "paypal-secure-update.net",
+        "label": "malicious",
+        "context": {
+            "scenario": "Phishing",
+            "technique": "T1566.002"
+        }
+    },
+    {
+        "id": "LAB-006",
+        "ioc_type": "IP",
+        "ioc_value": "185.123.45.67",
+        "label": "suspicious",
+        "context": {
+            "scenario": "Known Proxy",
+            "technique": "T1090"
+        }
+    },
+    {
+        "id": "LAB-007",
+        "ioc_type": "domain",
+        "ioc_value": "github.com",
+        "label": "clean",
+        "context": {
+            "scenario": "Baseline",
+            "technique": "None"
+        }
+    },
+    {
+        "id": "LAB-008",
+        "ioc_type": "IP",
+        "ioc_value": "45.133.1.25",
+        "label": "malicious",
+        "context": {
+            "scenario": "C2 Infrastructure",
+            "technique": "T1071.001"
+        }
+    }
+]

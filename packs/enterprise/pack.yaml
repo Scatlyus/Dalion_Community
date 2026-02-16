@@ -1,0 +1,12 @@
+name: "Neuroflux Enterprise Pack"
+version: "1.0.0"
+tier: "enterprise"
+agents:
+  - "dalion_governance"
+  - "dalion_compliance"
+limits:
+  daily_requests: 0 # Unlimited
+license: "Enterprise Unlimited"
+compliance:
+  - "ISO27001"
+  - "NIST"

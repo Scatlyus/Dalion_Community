@@ -1,0 +1,196 @@
+agents:
+  - name: dalion_operacao_sentinela
+    code: Dn-SEC-SNT
+    version: 1.4.4
+    author: Cristiano Monteiro Rita
+    license: proprietary_license
+    role: real_time_event_anomaly_detector
+    status: active
+    category: security_anomaly_detection
+
+    description:
+      summary: >
+        Monitors and analyzes individual security log events in real time to detect
+        operational deviations, assess risk, and provide concise context for rapid response.
+      details: >
+        Integrates baseline behavioral patterns, IoC feeds and compliance insights
+        from partner agents for contextual inference.
+
+    dependencies:
+      - name: DNABase
+        source: dnabase_core.yaml
+        version: ">=2.5.0,<3.0.0"
+        description: Core orchestration & memory foundation.
+      - name: Dalion_Inteligencia_Campo
+        description: Provides behavior baselines and historical context. :contentReference[oaicite:1]{index=1}
+      - name: Dalion_Espionagem_Contraespionagem
+        description: Supplies real-time IoC feeds and reputational data. :contentReference[oaicite:2]{index=2}
+      - name: Dalion_Artilharia
+        description: Offers compliance patterns and large-scale anomaly analytics. :contentReference[oaicite:3]{index=3}
+
+    capabilities:
+      single_event_analysis: true
+      multi_factor_risk_classification: true
+      context_aware_alerting: true
+      ioc_cross_check: true
+      dashboard_integration: true
+
+    input_schema:
+      type: object
+      required:
+        - timestamp
+        - event_id
+        - log_source_id
+        - source_ip
+        - action
+        - status
+        - severity
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601
+        event_id:
+          type: string
+          description: Event type identifier
+        log_source_id:
+          type: string
+          description: Log origin (e.g., Windows Security)
+        source_ip: &ip_pattern
+          type: string
+          pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$|^(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$"
+          description: IPv4 or IPv6
+        destination_ip:
+          <<: *ip_pattern
+          description: Destination IP
+        source_port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          description: Source port
+        destination_port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          description: Destination port
+        protocol:
+          type: string
+          enum: [TCP, UDP, HTTP, HTTPS]
+          description: Network protocol
+        username:
+          type: string
+          description: User or entity
+        action:
+          type: string
+          description: Action taken (e.g., login, create)
+        status:
+          type: string
+          enum: [success, failure, blocked, allowed]
+          description: Action result
+        severity:
+          type: string
+          enum: [informational, low, medium, high, critical]
+          description: Original event severity
+        message:
+          type: string
+          description: Full log message
+        device_type:
+          type: string
+          description: Generating device type
+        url:
+          type: string
+          format: uri
+          description: URL or URI
+        file_path:
+          type: string
+          description: File path
+        file_hash:
+          type: string
+          pattern: "^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64})$"
+          description: File hash (MD5/SHA1/SHA256)
+        process_name:
+          type: string
+          description: Process name
+        process_id:
+          type: integer
+          description: Process ID
+
+    output_schema:
+      type: object
+      required: [anomaly, reason, anomaly_score, risk_level, tags]
+      properties:
+        anomaly:
+          type: boolean
+          description: True if anomalous
+        reason:
+          type: string
+          description: Concise justification citing key criteria
+        anomaly_score:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Weighted anomaly score
+        risk_level:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Estimated incident risk
+        tags:
+          type: array
+          items: { type: string }
+          description: Incident categorization tags
+
+    detection_rules:
+      failed_logins_burst:
+        description: Multiple login failures in short period
+        impact_score: 70
+      suspicious_geo_login:
+        description: Unusual geo/device login
+        impact_score: 85
+      known_malicious_ioc:
+        description: Matches known IoCs
+        impact_score: 95
+      unauthorized_access_attempt:
+        description: Denied access to critical resources
+        impact_score: 80
+      unusual_file_activity:
+        description: Suspicious file operations
+        impact_score: 90
+      high_severity_event_flag:
+        description: Original event severity high/critical
+        impact_score: 60
+      behavioral_deviation:
+        description: Deviation from baseline behavior
+        impact_score: 75
+      sensitive_terms_in_message:
+        description: Threat terms in log message
+        impact_score: 90
+
+    observability:
+      logging: true
+      metrics:
+        anomalies_detected_total: Total anomalies
+        false_positive_rate: False positive rate
+        average_processing_time_ms: Avg. processing time
+        rule_trigger_frequency: Rule trigger frequency
+        input_validation_errors: Input validation errors
+        output_schema_compliance: Output schema compliance
+      status_check:
+        enabled: true
+        interval_sec: 60
+
+    error_handling:
+      strategy: return_flag_false_with_reason
+      fallback_on_missing_fields: true
+      actions:
+        on_processing_failure:
+          action: log_error_and_return_safe_default
+          details: >
+            anomaly=false, reason='Internal error.', anomaly_score=0, risk_level=low, tags=['agent_error']
+        on_schema_validation_failure:
+          action: log_error_and_alert_upstream
+          details: >
+            Log schema failure, alert Dalion_Infantaria, return safe default
+
+    core_instruction: |
+      You are *Dalion_Operacao_Sentinela* (Dn-SEC-SNT-v1.0.0). Ingest a JSON per `input_schema`, apply `detection_rules`, compute `anomaly_score` (sum of `impact_score`, capped at 100) and `risk_level` (low|medium|high|critical). Generate `reason` and `tags` as defined in `output_schema`. On insufficient data or internal error, return `anomaly=false` with explanatory `reason`. **Respond only with the strict JSON**.

@@ -1,0 +1,18 @@
+{
+  "pack_name": "Neuroflux Enterprise",
+  "tier": "enterprise",
+  "version": "1.0.0",
+  "build_date": "2026-02-12T22:42:53.055Z",
+  "files": [
+    {
+      "path": "pack.yaml",
+      "hash": "f444779ee5f722aea39f8e1109eb97491792dff82cc964de1a5406060c85b622",
+      "size": 248
+    },
+    {
+      "path": "policies\\governance_policy.md",
+      "hash": "e6a758b9c4554f9c9284650f89dff7bc36bc19c4fb95b373658db556eb9e80c1",
+      "size": 365
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+=== ­ƒº¬ Validando D2 Sentinela Real (Full Heuristics) ===
+
+--- Testando Burst Logic para IP 1.1.1.1 ---
+Tentativa 1: ÔÜ¬ OK (Score: 0)
+Tentativa 2: ÔÜ¬ OK (Score: 0)
+Tentativa 3: ­ƒÜ¿ ANOMALIA (Score: 70)
+
+--- Testando Regras Diversas ---
+
+Evento: login_failure | Msg: Failed login attempt...
+Result: ÔÜ¬ OK | Score: 0
+
+Evento: malicious_connection | Msg: Connection to known C2 IP...
+Result: ­ƒÜ¿ ANOMALIA | Score: 100
+Reasons: Event matches known malicious indicators; Event flagged as high/critical severity
+Tags: known_malicious_ioc, high_severity_event_flag, event:malicious_connection, source:firewall, action:connect
+
+Evento: email_phishing | Msg: Email containing suspicious li...
+Result: ­ƒÜ¿ ANOMALIA | Score: 100
+Reasons: Event matches known malicious indicators; Event flagged as high/critical severity; Security-related keywords in log message
+Tags: known_malicious_ioc, high_severity_event_flag, sensitive_terms_in_message, event:email_phishing, source:o365, action:receive
+
+Evento: odd_hour_login | Msg: User logged in at 3 AM...
+Result: ­ƒÜ¿ ANOMALIA | Score: 75
+Reasons: Deviation from baseline behavior
+Tags: behavioral_deviation, event:odd_hour_login, source:vpn, action:login
+
+Evento: file_creation | Msg: Executable created in temp dir...
+Result: ­ƒÜ¿ ANOMALIA | Score: 100
+Reasons: Suspicious file operations detected; Event flagged as high/critical severity
+Tags: unusual_file_activity, high_severity_event_flag, event:file_creation, source:edr, action:write

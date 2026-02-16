@@ -1,0 +1,12 @@
+name: "Neuroflux Pro Pack"
+version: "1.0.0"
+tier: "pro"
+agents:
+  - "dalion_attackgraph"
+  - "dalion_psysec"
+limits:
+  daily_requests: 1000
+license: "Professional"
+addons:
+  - "advanced_routers"
+  - "threat_intel_stream"

@@ -1,0 +1,83 @@
+[dotenv@17.3.1] injecting env (3) from .env -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+=== ­ƒòÁ´©Å D3 ESPIONAGEM: REAL API TEST ===
+
+Ô£à API keys validated
+
+­ƒöº Initializing D3 Espionagem...
+Ô£à D3 ready
+
+­ƒôè Test IOCs:
+  1. domain: microsoft-security-verify.com
+  2. IP: 185.123.45.67
+  3. domain: google.com
+
+­ƒöì Enriching IOCs (this may take 15-30 seconds due to rate limits)...
+
+Ô£à Enrichment complete!
+
+============================================================
+­ƒôè ENRICHMENT RESULTS
+============================================================
+
+1. DOMAIN: microsoft-security-verify.com
+   Reputation: UNKNOWN
+   Threat Score: 0/100
+   Confidence: 60%
+   VirusTotal:
+     - Malicious: 0
+     - Suspicious: 0
+     - Clean: 0
+     - Reputation: 1.00
+
+2. IP: 185.123.45.67
+   Reputation: UNKNOWN
+   Threat Score: 0/100
+   Confidence: 90%
+   VirusTotal:
+     - Malicious: 0
+     - Suspicious: 0
+     - Clean: 60
+     - Reputation: 1.00
+   AbuseIPDB:
+     - Confidence Score: 0/100
+     - Total Reports: 0
+     - Country: UA
+     - Whitelisted: No
+
+3. DOMAIN: google.com
+   Reputation: CLEAN
+   Threat Score: 1/100
+   Confidence: 60%
+   VirusTotal:
+     - Malicious: 1
+     - Suspicious: 0
+     - Clean: 66
+     - Reputation: 0.98
+
+============================================================
+­ƒôê SUMMARY REPORT
+============================================================
+Total IOCs: 3
+Malicious: 0
+Suspicious: 0
+Clean: 1
+Unknown: 2
+Sources used: VirusTotal, AbuseIPDB
+Cache hits: 0
+API calls: 4
+Total time: 30.98s
+Avg per IOC: 10327ms
+
+============================================================
+ÔÜí PERFORMANCE ANALYSIS
+============================================================
+Ô£à GOOD: 5-15s per IOC (rate limiting expected)
+
+============================================================
+­ƒÄ» VALIDATION
+============================================================
+Ô£à PASSED: Real enrichment data received
+ÔÜá´©Å  WARNING: Classification may need review
+
+­ƒÄë D3 ESPIONAGEM: TEST COMPLETE!
+

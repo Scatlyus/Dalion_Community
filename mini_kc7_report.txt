@@ -1,0 +1,11 @@
+=== ­ƒº¬ MINI-KC7 LOCAL VALIDATION ===
+Dataset: mini-kc7/lab_dataset.jsonl
+
+[D8 ThreatIntel] Searching global feeds for malicious-pdf-link.com...
+[D10 Ethos] Classifying signal for malicious-pdf-link.com...
+Runner crashed: TypeError: Cannot read properties of undefined (reading 'virustotal')
+    at Object.check (C:\root\Dalion\src\agents\d10_ethos\classifier.ts:30:52)
+    at ThreatClassifier.classify (C:\root\Dalion\src\agents\d10_ethos\classifier.ts:95:28)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DalionEthos.classify (C:\root\Dalion\src\agents\d10_ethos\index.ts:23:24)
+    at async main (C:\root\Dalion\mini-kc7\run_mini_kc7.ts:116:32)

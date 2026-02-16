@@ -1,0 +1,113 @@
+🔥 TOP 1 – OS MAIS COMPLETOS E 100% GRATUITOS Cyber Range
+🟦 1) Security Onion (FREE – profissional)
+Nível: Militar / SOC profissional
+Serve para:
+•	SIEM completo
+•	IDS/IPS (Snort/Suricata)
+•	PCAP, logs, threat hunting
+•	Monitorar ataques do Dalion em tempo real
+✔️ Completo
+✔️ Gratuito
+✔️ A base de muitos SOCs reais
+✔️ Perfeito para analisar “como o Dalion se comporta”
+👉 É praticamente uma central de guerra cibernética.
+________________________________________
+🟥 2) Metasploitable 2 e 3 (FREE)
+Nível: Alvo vulnerável profissional
+Serve para:
+•	Testar exploração (Cavalaria)
+•	Simular ataques reais
+•	Treinar escalonamento e pivoting
+✔️ Gratuito
+✔️ Extremamente vulnerável
+✔️ Ideal para Dalion_Cavalaria, Dalion_Espionagem, DNABase
+Essa máquina é um campo de tiro digital para exploits.
+________________________________________
+🟩 3) OWASP Juice Shop (FREE)
+Aplicação web deliberadamente vulnerável.
+Perfeito para:
+•	SQL injection
+•	XSS
+•	Auth bypass
+•	LFI/RFI
+•	Authentication flaws
+✔️ Gratuito
+✔️ Fácil de subir (Docker ou VM)
+✔️ Ideal para testar web exploitation do Dalion
+________________________________________
+🟧 4) Kali Linux (FREE)
+Suite de ferramentas ofensivas.
+Você não vai usar como atacante humano,
+mas o Dalion pode chamar utilitários internos dentro da VM:
+•	Nmap
+•	Nikto
+•	Hydra
+•	Gobuster
+•	Metasploit
+•	Wfuzz
+✔️ Gratuito
+✔️ Oficial
+✔️ Facilita integração com pipeline do Dalion
+________________________________________
+🌐 Cyber Ranges Gratuitos e COMPLETOS de verdade
+5) FLARE VM (FREE)
+Criado pela Mandiant para análise de malware.
+Ideal para:
+•	análise estática
+•	engenharia reversa
+•	behavior analysis
+•	sandboxes locais
+✔️ Gratuito
+✔️ Pesquisadores do mundo inteiro usam
+✔️ Excelente para testar “persistência simulada”
+________________________________________
+6) REMnux (FREE)
+Outra distro completa para malware.
+✔️ Gratuita
+✔️ Perfeita para testar como o Dalion lida com arquivos maliciosos
+________________________________________
+7) TheHive + Cortex (FREE)
+Ferramenta de resposta a incidentes e automação.
+✔️ Gratuita
+✔️ Excelente para usar com Dalion_AssuntosCivis
+✔️ Gera relatórios profissionais
+✔️ Orquestra ações defensivas
+________________________________________
+8) Elastic Stack (Elasticsearch + Kibana + Beats) – FREE Tier
+Pode ser usado como SIEM.
+✔️ Open source
+✔️ Excelente para logs do Dalion
+✔️ Integra com Security Onion
+________________________________________
+🧪 Plataformas de Treino Online (Free)
+9) TryHackMe – FREE Tier
+Pode baixar máquinas para rodar localmente.
+Tem laboratórios inteiros gratuitos.
+10) Hack The Box – FREE Tier
+Tem labs free e boxes vulneráveis.
+Dica:
+Você pode baixar os “boxes retired” e rodar localmente para o Dalion testar.
+________________________________________
+🛠️ Extras que são quase essenciais
+11) Atomic Red Team (FREE)
+Simula técnicas MITRE ATT&CK de forma segura no seu PC.
+✔️ Perfeito para Dalion_Espionagem + Sentinela
+✔️ Testes de lateral movement seguros
+✔️ Sem risco real
+________________________________________
+🧩 O Cyber Range Completo — Versão GRATUITA
+Se tu juntar tudo isso, tu terá:
+Componente	Gratuito?	Função
+Security Onion	✔️	SIEM, IDS, monitoramento
+Kali Linux	✔️	Ferramentas de ataque
+Metasploitable	✔️	Máquina vulnerável
+Juice Shop	✔️	App web vulnerável
+Elastic Stack	✔️	Logs e dashboards
+Atomic Red Team	✔️	Simulação ATT&CK
+TheHive + Cortex	✔️	Resposta a incidentes
+REMnux	✔️	Análise de malware
+FLARE VM	✔️	Engenharia reversa
+Com isso você monta:
+Um ambiente completo de guerra cibernética,
+compatível com todos os agentes do Dalion + Solomon + DNABase.
+

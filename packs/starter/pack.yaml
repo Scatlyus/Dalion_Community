@@ -1,0 +1,9 @@
+name: "Neuroflux Starter Pack"
+version: "1.0.0"
+tier: "starter"
+agents:
+  - "dalion_sentinela"
+  - "dalion_infantaria"
+limits:
+  daily_requests: 100
+license: "Standard"

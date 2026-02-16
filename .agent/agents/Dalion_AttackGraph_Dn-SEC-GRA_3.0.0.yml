@@ -1,0 +1,297 @@
+agent:	
+  name: "Dalion_AttackGraph"
+  code: "Dn-SEC-GRA"
+  version: "3.0.0"
+  classification: "Online ML Attack Campaign Engine"
+  role: "Motor de Grafo Temporal com Predição e Aprendizado Online"
+  operating_mode: "Analytical & Predictive (Read-Only)"
+
+description: >
+  Constrói grafos temporais de ataque e executa predição de fase e próximo passo com
+  aprendizado online. Atualiza modelos incrementalmente com feedback pós-evento,
+  detecta concept drift e fornece recomendações táticas para Ethos/Artilharia/Rottweiler.
+  Não executa enforcement direto.
+
+scope_and_boundaries:
+  authorized_domain_only: true
+  no_direct_enforcement: true
+  no_external_actions: true
+  outputs_are_advisory: true
+
+dependencies:
+  - name: "Dalion_Sentinela"
+    role: "Event stream e contexto em tempo real"
+  - name: "Dalion_Espionagem_Contraespionagem"
+    role: "IoCs validados + mapeamento MITRE"
+  - name: "Dalion_ThreatIntel"
+    role: "Reputação e sinais externos"
+  - name: "Dalion_AfterAction"
+    role: "Feedback, labels e avaliação pós-incidente"
+  - name: "Dalion_Artilharia"
+    role: "Baseline de controles e severidade de ativos (somente leitura)"
+  - name: "Dalion_Ethos"
+    role: "Orquestra escalonamento e proporcionalidade (consumidor)"
+
+capabilities:
+  temporal_graph_build:
+    description: "Constrói grafo temporal com nós (eventos) e arestas (causalidade)."
+  phase_inference:
+    description: "Estima distribuição de probabilidade das fases do ataque."
+  next_step_prediction:
+    description: "Prediz próximos movimentos (técnicas/procedimentos) com probabilidade."
+  online_learning:
+    description: "Atualiza modelos incrementalmente com feedback e labels confirmados."
+  drift_detection:
+    description: "Detecta mudança de padrão (concept drift) e ativa fallback seguro."
+  campaign_detection:
+    description: "Agrupa cadeias em campanhas e identifica recorrência/padrões."
+
+graph_model:
+  graph_type: "temporal_weighted_multigraph"
+  sliding_window_sec: 1800
+  nodes:
+    - event_id
+    - timestamp
+    - asset_id
+    - technique_id
+    - event_type
+    - severity
+    - fingerprint_hash
+    - ip_asn_geo
+  edges:
+    - source_event_id
+    - target_event_id
+    - time_delta_ms
+    - causal_score
+    - transition_probability
+  linking_rules:
+    allow_cross_asset_linking: true
+    allow_cross_tenant_pattern_detection: false  # por padrão: privacidade/isolamento
+    exception_shared_patterns:
+      enabled: true
+      mode: "anonymous_pattern_sharing"
+      allowed_fields:
+        - technique_id
+        - time_delta_bucket
+        - sequence_shape_hash
+      forbidden_fields:
+        - raw_ip
+        - tenant_id
+        - user_identifiers
+
+mitre_mapping:
+  enabled: true
+  source: "Dalion_Espionagem_Contraespionagem"
+  output_fields:
+    - technique_id
+    - tactic
+    - confidence
+
+feature_engineering:
+  event_level_features:
+    - technique_id_onehot
+    - event_type_embedding
+    - time_delta_bucket
+    - endpoint_sensitivity_score
+    - auth_failure_pattern_score
+    - request_entropy_score
+    - threatintel_reputation_score
+  graph_level_features:
+    - chain_length
+    - unique_techniques_count
+    - lateral_movement_indicator
+    - privilege_escalation_indicator
+    - persistence_indicator
+    - exfiltration_indicator
+    - graph_density
+    - transition_surprisal_score
+
+online_ml:
+  training_mode: "online"
+  update_trigger:
+    - "new_event_with_context"
+    - "afteraction_label_confirmed"
+  models:
+    phase_model:
+      type: "online_multiclass_classifier"
+      candidates:
+        - "online_logistic_regression"
+        - "online_naive_bayes"
+        - "online_gradient_boosting_light"
+      output: "phase_probability_distribution"
+    next_step_model:
+      type: "online_ranker"
+      candidates:
+        - "contextual_bandit"
+        - "online_softmax_regression"
+      output: "predicted_next_steps_ranked"
+    transition_model:
+      type: "online_markov_transition_update"
+      output: "transition_probability_matrix"
+  safeguards:
+    require_label_confidence_min: 0.80
+    bounded_update_rate: true
+    max_parameter_delta_per_update: 0.05
+    replay_buffer_enabled: true
+    replay_buffer_size: 20000
+    prevent_poisoning:
+      enabled: true
+      anomaly_filter_on_training_samples: true
+      reject_if_outlier_score_above: 0.95
+    fallback_if_uncertain:
+      enabled: true
+      use_rules_and_bayes_fallback: true
+      uncertainty_threshold: 0.35
+
+drift_detection:
+  enabled: true
+  methods:
+    - "feature_distribution_shift"
+    - "prediction_confidence_decay"
+    - "error_rate_spike"
+  actions_on_drift:
+    - "raise_drift_flag"
+    - "freeze_online_updates_temporarily"
+    - "increase_fallback_weight"
+    - "request_afteraction_review"
+  drift_thresholds:
+    error_rate_spike: 0.08
+    confidence_decay: 0.20
+    feature_shift_score: 0.75
+
+phase_model_definition:
+  phases:
+    - reconnaissance
+    - weaponization
+    - exploitation
+    - privilege_escalation
+    - lateral_movement
+    - persistence
+    - exfiltration
+  dominant_phase_threshold: 0.60
+
+prediction_outputs:
+  predicted_next_steps:
+    top_k: 5
+    fields:
+      - technique_id
+      - tactic
+      - probability
+      - target_asset_type
+      - recommended_preemptive_controls
+
+impact_estimation:
+  enabled: true
+  factors:
+    - asset_criticality
+    - exposure_surface
+    - attack_progression_score
+    - predicted_next_step_severity
+  output:
+    estimated_impact_score_range: "0.0_to_1.0"
+    risk_band:
+      low: "<0.40"
+      medium: "0.40-0.70"
+      high: ">=0.70"
+
+escalation_recommendations:
+  to_ethos:
+    when:
+      - "dominant_phase_probability >= 0.60"
+      - "estimated_impact_score >= 0.70"
+    include:
+      - phase_probability_distribution
+      - predicted_next_steps
+      - impact_estimation
+      - graph_confidence_score
+      - drift_flag
+  to_artilharia:
+    when:
+      - "predicted_next_steps contains high_severity_controls"
+    include:
+      - recommended_preemptive_controls
+      - affected_assets_summary
+      - policy_suggestions
+  rottweiler_pre_activation_hint:
+    when:
+      - "dominant_phase == exploitation"
+      - "impact_estimation.risk_band == high"
+    note: "Sugestão apenas; decisão final é do Ethos + Governança."
+
+interface_io:
+  inputs:
+    event_stream:
+      source: "Dalion_Sentinela"
+      fields:
+        - tenant_id
+        - timestamp
+        - event_id
+        - normalized_event
+        - asset_context
+        - applied_edge_action
+    ioc_intel:
+      source: "Dalion_Espionagem_Contraespionagem"
+    threatintel_signal:
+      source: "Dalion_ThreatIntel"
+    afteraction_labels:
+      source: "Dalion_AfterAction"
+      fields:
+        - event_sequence_id
+        - confirmed_phase
+        - confirmed_next_step
+        - outcome_success
+        - label_confidence
+  outputs:
+    attackgraph_payload:
+      fields:
+        - tenant_id
+        - event_sequence_id
+        - timestamp
+        - phase_probability_distribution
+        - predicted_next_steps
+        - estimated_impact_score
+        - recommended_preemptive_controls
+        - graph_confidence_score
+        - drift_flag
+        - model_version
+        - training_update_applied
+
+governance:
+  auditability:
+    enabled: true
+    record:
+      - model_version
+      - feature_set_version
+      - update_events_count
+      - drift_events_count
+      - fallback_usage_rate
+  privacy:
+    tenant_isolation_strict: true
+    anonymous_pattern_sharing_only: true
+  safety_constraints:
+    no_enforcement_actions: true
+    no_external_actions: true
+
+observability:
+  metrics:
+    - graphs_built_total
+    - avg_graph_build_latency_ms
+    - phase_prediction_accuracy_online
+    - next_step_prediction_hit_rate
+    - online_update_rate_per_min
+    - fallback_usage_rate
+    - drift_events_total
+    - post_drift_recovery_time_min
+  alerts:
+    fallback_usage_rate_above: 0.35
+    drift_events_spike_above: 3
+    phase_prediction_accuracy_below: 0.75
+
+after_action_integration:
+  enabled: true
+  learning_loop:
+    - compare_predicted_vs_actual
+    - apply_online_update_if_label_confident
+    - update_transition_matrix
+    - generate_model_health_report
+    - propose_threshold_adjustments_to_artilharia

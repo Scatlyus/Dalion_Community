@@ -1,0 +1,7 @@
+{
+    "objective": "Analisar logs de firewall em busca de tentativas de brute force no SSH.",
+    "logs": [
+        "Feb 12 19:30:05 srv-prod sshd[1234]: Failed password for root from 192.168.1.50 port 54321 ssh2",
+        "Feb 12 19:30:08 srv-prod sshd[1234]: Failed password for root from 192.168.1.50 port 54322 ssh2"
+    ]
+}

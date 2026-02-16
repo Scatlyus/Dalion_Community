@@ -1,0 +1,167 @@
+agent:	
+  name: "Dalion_Ethos"
+  code: "Dn-SEC-ETH"
+  version: "3.0.0"
+  classification: "Strategic Decision Council Engine"
+  role: "Órgão Supremo de Deliberação Estratégica"
+  operating_mode: "Deliberative Governance Layer"
+
+description: >
+  Atua como Conselho de Decisão do ecossistema Dalion.
+  Integra sinais técnicos, probabilísticos e regulatórios
+  para deliberar sobre escalonamento, contenção e proporcionalidade.
+
+core_principles:
+  - proportionality
+  - risk_weighted_decision
+  - governance_first
+  - minimize_false_positive
+  - strategic_escalation_control
+  - human_override_respect
+
+inputs:
+
+  from_attackgraph:
+    - phase_probability_distribution
+    - predicted_next_steps
+    - estimated_impact_score
+    - graph_confidence_score
+    - drift_flag
+
+  from_infantaria:
+    - local_risk_score
+    - progressive_action_applied
+    - fingerprint_hash
+    - repetition_pattern
+
+  from_artilharia:
+    - policy_constraints
+    - tenant_risk_profile
+    - compliance_profile
+    - active_thresholds
+
+  from_afteraction:
+    - historical_accuracy
+    - model_health_status
+    - drift_status
+    - threshold_recommendations
+
+  from_diplomacia:
+    - regulatory_constraints
+    - legal_sensitivity
+    - human_override_flag
+    - critical_asset_flag
+
+deliberation_engine:
+
+  evaluation_dimensions:
+    - technical_threat_severity
+    - progression_likelihood
+    - asset_criticality
+    - regulatory_risk
+    - reputational_risk
+    - model_confidence
+    - false_positive_risk
+
+  decision_score_formula: >
+    council_score =
+      (technical_threat_severity * w1) +
+      (progression_likelihood * w2) +
+      (asset_criticality * w3) +
+      (regulatory_risk * w4) +
+      (reputational_risk * w5) -
+      (false_positive_risk * w6)
+
+  weight_policy:
+    w1: 0.20
+    w2: 0.20
+    w3: 0.15
+    w4: 0.15
+    w5: 0.10
+    w6: 0.20
+
+decision_thresholds:
+
+  monitor_only: "<0.40"
+  reinforce_controls: "0.40-0.65"
+  escalate_defensive: "0.65-0.80"
+  authorize_rottweiler: ">=0.80"
+
+escalation_outputs:
+
+  monitor_only:
+    actions:
+      - increase_observability
+      - notify_sentinela
+
+  reinforce_controls:
+    actions:
+      - recommend_artilharia_policy_adjustment
+      - increase_rate_limit_profile
+      - enable_preemptive_controls
+
+  escalate_defensive:
+    actions:
+      - notify_artilharia_high_risk
+      - pre_authorize_rottweiler
+      - notify_diplomacia
+
+  authorize_rottweiler:
+    conditions:
+      - graph_confidence_score >= 0.75
+      - drift_flag == false
+      - human_override_flag != true
+    actions:
+      - activate_rottweiler_level_3
+      - notify_diplomacia_immediate
+      - generate_executive_alert
+
+human_governance:
+
+  override_capability:
+    enabled: true
+    override_requires_reason: true
+    record_override_decision: true
+
+  high_impact_requirement:
+    require_human_review_if:
+      - estimated_impact_score >= 0.85
+      - critical_asset_flag == true
+
+model_integrity_checks:
+
+  require_min_graph_confidence: 0.60
+  block_escalation_if_drift_active: true
+  block_rottweiler_if_model_health_degraded: true
+
+auditability:
+
+  log_decision_trace: true
+  record_input_vectors: true
+  record_weight_snapshot: true
+  record_threshold_snapshot: true
+  encryption_required: true
+
+observability:
+
+  metrics:
+    - decisions_total
+    - rottweiler_authorizations
+    - human_overrides
+    - escalation_accuracy
+    - false_positive_prevented
+    - average_council_score
+    - decision_latency_ms
+
+security_posture:
+
+  no_direct_enforcement: true
+  governance_only: true
+  compliance_aligned: true
+  tenant_isolation_strict: true
+
+certification:
+  enterprise_ready: true
+  strategic_ready: true
+  ml_governance_integrated: true
+  executive_dashboard_ready: true

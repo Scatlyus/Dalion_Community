@@ -1,0 +1,163 @@
+# Dalion + Arqos Full Stack
+# Production-ready deployment with all services
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dalion_postgres
+    environment:
+      POSTGRES_DB: dalion
+      POSTGRES_USER: dalion_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_this_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dalion_user -d dalion"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dalion_network
+
+  # Redis (for caching threat intel)
+  redis:
+    image: redis:7-alpine
+    container_name: dalion_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dalion_network
+
+  # Arqos Engine
+  arqos_engine:
+    build:
+      context: ./arqos_engine
+      dockerfile: Dockerfile
+    container_name: dalion_arqos_engine
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://dalion_user:${DB_PASSWORD:-change_this_password}@postgres:5432/dalion
+      REDIS_URL: redis://redis:6379
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./arqos_engine:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    command: npm run start:prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - dalion_network
+    restart: unless-stopped
+
+  # Dalion Agents Runner
+  dalion_agents:
+    build:
+      context: .
+      dockerfile: Dockerfile.agents
+    container_name: dalion_agents
+    depends_on:
+      arqos_engine:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      ARQOS_API_URL: http://arqos_engine:3000
+      REDIS_URL: redis://redis:6379
+      VT_API_KEY: ${VT_API_KEY}
+      ABUSEIPDB_API_KEY: ${ABUSEIPDB_API_KEY}
+    volumes:
+      - ./src/agents:/app/agents
+      - ./logs:/app/logs
+      - ./data:/app/data:ro
+    networks:
+      - dalion_network
+    restart: unless-stopped
+
+  # Maestro UI (optional - for visualization)
+  maestro_ui:
+    build:
+      context: ./arqos_engine/packages/ui
+      dockerfile: Dockerfile
+    container_name: dalion_maestro_ui
+    depends_on:
+      - arqos_engine
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+    ports:
+      - "3001:3000"
+    networks:
+      - dalion_network
+    restart: unless-stopped
+
+  # Grafana (monitoring - optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dalion_grafana
+    ports:
+      - "3002:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - dalion_network
+    restart: unless-stopped
+
+  # Prometheus (metrics - optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dalion_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - dalion_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+
+networks:
+  dalion_network:
+    driver: bridge

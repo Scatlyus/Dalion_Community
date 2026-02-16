@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:d2": "npx ts-node test_d2_real.ts"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.6",
+    "autocannon": "^8.0.0",
+    "axios": "^1.13.5",
+    "bottleneck": "^2.19.5",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "ioredis": "^5.9.3",
+    "js-yaml": "^4.1.1",
+    "node-fetch": "^3.3.2",
+    "zod": "^4.3.6",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "@types/node-fetch": "^2.6.13",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

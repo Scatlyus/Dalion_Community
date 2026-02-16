@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*",
+        "test_vr01.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/agents/d3_espionagem/**"
+    ]
+}

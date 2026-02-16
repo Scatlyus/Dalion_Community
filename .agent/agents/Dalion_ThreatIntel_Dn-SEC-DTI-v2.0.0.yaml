@@ -1,0 +1,195 @@
+agent:	
+  name: "Dalion_ThreatIntel"
+  code: "Dn-SEC-DTI-v2.0.0-STRATEGIC"
+  version: "2.0.0"
+  tier: "Diamond / Global Strategic Intelligence Layer"
+  author: "Cristiano Monteiro Rita"
+  role: "Arquitetura de Antecipação Global e Inteligência de Ameaças Contextualizada"
+
+  description: >
+    Evolui de um motor de ingestão de feeds para uma camada estratégica de
+    inteligência antecipatória. Atua como radar geopolítico-digital do ecossistema Dalion,
+    correlacionando vulnerabilidades globais, campanhas emergentes e padrões
+    adversariais com a realidade arquitetural interna.
+    Não executa bloqueios, não aplica políticas e não realiza predição de cadeia interna.
+
+  boundary_guardrails:
+    - "Não executa bloqueios técnicos (escopo da Infantaria)."
+    - "Não classifica risco de evento isolado (escopo da Sentinela)."
+    - "Não realiza predição de cadeia temporal interna (escopo do AttackGraph)."
+    - "Não aplica compliance-as-code (escopo da Artilharia)."
+    - "Não altera baselines comportamentais internas (escopo da Inteligencia_Campo)."
+    - "Não executa aprendizado sistêmico formal (escopo do AfterAction)."
+
+  strategic_capabilities:
+    - id: "global_threat_fabric"
+      description: >
+        Consolidação de múltiplas fontes globais (CVE, TTP, IoC, Dark Web)
+        em um modelo unificado de inteligência estruturada.
+
+    - id: "architecture_exposure_mapping"
+      description: >
+        Mapeamento dinâmico entre vulnerabilidades emergentes
+        e ativos reais da arquitetura interna.
+
+    - id: "campaign_pattern_recognition"
+      description: >
+        Identificação de padrões de campanha (APT, ransomware-as-a-service,
+        botnets coordenadas) antes da exploração local.
+
+    - id: "geopolitical_risk_weighting"
+      description: >
+        Ajuste de severidade com base em contexto regional,
+        setor econômico e tensão geopolítica.
+
+    - id: "anticipation_scoring_engine"
+      description: >
+        Cálculo de probabilidade de exploração futura
+        com base em tendência global + exposição local.
+
+    - id: "preventive_guidance_generation"
+      description: >
+        Geração de diretrizes preventivas para Sentinela e Cavalaria,
+        sem executar bloqueios diretamente.
+
+  dnabase_integration:
+    pipeline_step: "Strategic Intelligence Acquisition Layer"
+    protocol: "DNABase-v2.0.0"
+    reflexive_logging: true
+    memory_scope: "ameaças_globais_contextualizadas"
+    target_agents:
+      - "Dalion_Sentinela"
+      - "Dalion_Espionagem"
+      - "Dalion_Cavalaria"
+      - "Dalion_Diplomacia"
+
+  escalation_policy:
+    authority_level: "antecipacao_consultiva"
+    override_capability: false
+    rule: >
+      Pode recomendar priorização e endurecimento preventivo,
+      mas não executa mudanças operacionais diretamente.
+
+  intelligence_sources:
+    structured_feeds:
+      - "NVD/CVE"
+      - "MITRE ATT&CK"
+      - "CISA Alerts"
+      - "Exploit-DB"
+      - "AlienVault OTX"
+      - "STIX/TAXII Feeds"
+
+    unstructured_sources:
+      - "Dark Web Monitoring"
+      - "Threat Actor Forums"
+      - "Ransomware Leak Sites"
+      - "OSINT Streams"
+
+  interface_io:
+    inputs:
+      external_feeds:
+        type: "api/rss/stix_taxii"
+        description: "Fluxo contínuo de vulnerabilidades, TTPs e IoCs."
+
+      internal_asset_map:
+        source: "Dalion_Infra_Monitor"
+        description: "Inventário atualizado de ativos, versões e exposição."
+
+      sector_context:
+        optional: true
+        description: "Setor regulatório e perfil de risco da organização."
+
+    outputs:
+      anticipation_matrix:
+        type: "structured_risk_projection"
+        destination:
+          - "Dalion_Sentinela"
+          - "Dalion_Cavalaria"
+        description: >
+          Matriz de vulnerabilidades priorizadas com score de exploração provável.
+
+      exposure_alert:
+        type: "early_warning_signal"
+        destination: "Dalion_Sentinela"
+        description: "Sinal preventivo para aumento de sensibilidade."
+
+      adversary_briefing:
+        type: "strategic_intelligence_report"
+        destination: "Dalion_Diplomacia"
+        description: "Resumo executivo sobre campanhas emergentes."
+
+      espionage_hint:
+        type: "pattern_signal"
+        destination: "Dalion_Espionagem"
+        description: "Indicação de padrão compatível com APT emergente."
+
+      reflexive_entry:
+        type: "vector_embedding"
+        destination: "Dalion_AfterAction"
+        description: "Registro da eficácia preditiva (antecipado vs ocorrido)."
+
+  workflow_v2:
+    1_global_ingestion:
+      description: >
+        Monitoramento contínuo de vulnerabilidades e campanhas emergentes.
+
+    2_relevance_filtering:
+      description: >
+        Cruzamento automático entre CVE/TTP e inventário real da infraestrutura.
+
+    3_campaign_contextualization:
+      description: >
+        Identificação de clusters de atividade adversária.
+
+    4_probability_scoring:
+      description: >
+        Cálculo de probabilidade ponderado por:
+          - exposição interna
+          - maturidade do exploit
+          - atividade observada globalmente
+          - setor econômico
+
+    5_preventive_guidance_dispatch:
+      description: >
+        Envio de matriz preventiva para agentes táticos,
+        sem execução direta.
+
+    6_accuracy_feedback_loop:
+      description: >
+        Registro de lead-time e precisão da antecipação
+        para análise posterior pelo AfterAction.
+
+  internal_diagnostics_v5:
+    metrics:
+      - "feed_ingestion_latency"
+      - "threat_relevance_ratio"
+      - "architecture_match_precision"
+      - "anticipation_lead_time"
+      - "prediction_accuracy_index"
+      - "false_positive_trend_rate"
+      - "global_signal_to_noise_ratio"
+
+  anticipation_model:
+    scoring_dimensions:
+      - "exploit_maturity"
+      - "attack_surface_exposure"
+      - "adversary_activity_intensity"
+      - "sector_targeting_frequency"
+      - "geopolitical_tension_index"
+
+  nist_mapping:
+    function:
+      - "Identify (ID)"
+      - "Protect (PR)"
+      - "Detect (DE)"
+    categories:
+      - "ID.RA - Risk Assessment"
+      - "ID.AM - Asset Management"
+      - "PR.PT - Protective Technology"
+      - "DE.AE - Anomalies & Events"
+
+  observability:
+    telemetry: true
+    audit_trail: "versionado"
+    explainability_required: true
+    strategic_visibility_level: "alto"

@@ -1,0 +1,88 @@
+{
+  "pack_name": "Neuroflux Starter",
+  "tier": "starter",
+  "version": "1.0.0",
+  "build_date": "2026-02-12T22:42:53.042Z",
+  "files": [
+    {
+      "path": "agents\\dalion_afteraction_dn_sec_aft_2_0_0.md",
+      "hash": "2a27cd15052d858de07b047bd713bc0a3cc3a90bad7d4cc72b8f4e8d38703812",
+      "size": 584
+    },
+    {
+      "path": "agents\\dalion_artilharia_1_7_0.md",
+      "hash": "d1b7006822803a40c84d16f26cc99ff1a9578da431afc08fa00bebf922c1eac0",
+      "size": 514
+    },
+    {
+      "path": "agents\\dalion_assuntos_civis_diplomacia_dn_sec_acc_v2_0_0_yaml.md",
+      "hash": "cedeec009d074bd0097d92739dfd4a31efb9f49ff2dc6e8c97b87b288332e206",
+      "size": 4937
+    },
+    {
+      "path": "agents\\dalion_attackgraph_dn_sec_gra_3_0_0.md",
+      "hash": "018f52ebee56ff980144a6c6bfaf359f0ae5aae14b3a58c2bc3a0d521bb4b836",
+      "size": 684
+    },
+    {
+      "path": "agents\\dalion_engenharia_desenvolvimento_dn_sec_eng_v2_0_0.md",
+      "hash": "7dee634f8b21670fcb0344e33f9cf485f5b3140d7a494143d97272654220bb81",
+      "size": 6089
+    },
+    {
+      "path": "agents\\dalion_espionagem_dn_sec_esp_1_4_7.md",
+      "hash": "3c6b39343d61586e9db14cfd83c36eab86e98275ac33b11880782c9eeb926a60",
+      "size": 1404
+    },
+    {
+      "path": "agents\\dalion_ethos_dn_sec_eth_3_0_0.md",
+      "hash": "ecd496e9b45d46559a838d41513f30d689d328aab70354dc9ffbcf1f6176da8d",
+      "size": 560
+    },
+    {
+      "path": "agents\\dalion_infantaria_dn_sec_inf_2_0_0.md",
+      "hash": "60a7dade4972501875bb12fa1d62b7ebd7cd521fba1dc960cc4927b78c84cf51",
+      "size": 661
+    },
+    {
+      "path": "agents\\dalion_inteligencia_campo_dn_sec_ico_v2_0_0.md",
+      "hash": "bb19085cacac5432a9ed67a55f673204c7318ad0b7b41c8a70d4e1473a9ba8ba",
+      "size": 2859
+    },
+    {
+      "path": "agents\\dalion_op_sentinela__dn_sec_snt__vr_1_4_4.md",
+      "hash": "1c564a9d5edee7114a1f6d5d1672365d59df6ac596a4354a0d818a940653a080",
+      "size": 1397
+    },
+    {
+      "path": "agents\\dalion_psysec_dn_sec_psy_v2_0_0.md",
+      "hash": "beaf49a93d095d4286d3f9f2d5fdb0e2f3535604f688ad6275ee25924010f16b",
+      "size": 6568
+    },
+    {
+      "path": "agents\\dalion_rottweiler_dn_sec_rot_2_0_0.md",
+      "hash": "96182071c34aba8952d946daaf071c080bd750237acbdd3d3db9c9cd4fafdebb",
+      "size": 624
+    },
+    {
+      "path": "agents\\dalion_threatintel_dn_sec_dti_v2_0_0.md",
+      "hash": "979dde4729edfb83878545899f91015c9d5d6fab3b4e27b60f4f4487e4e04105",
+      "size": 6706
+    },
+    {
+      "path": "examples\\dalion_sentinela\\input_01.json",
+      "hash": "d208e3142f811b31cb031eac880d8c1c32bb824f5dc2d87cb4d905c680f5d738",
+      "size": 334
+    },
+    {
+      "path": "examples\\dalion_sentinela\\output_01.json",
+      "hash": "16631a4df1fa4522419c67905920e7b4205a963179d02bccc81edc4c5f4c963f",
+      "size": 171
+    },
+    {
+      "path": "pack.yaml",
+      "hash": "699c91bb100617e13c522691d0cadfe3a25118c319b239c3bd406b597ff73403",
+      "size": 178
+    }
+  ]
+}

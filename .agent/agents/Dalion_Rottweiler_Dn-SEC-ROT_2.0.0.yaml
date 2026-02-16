@@ -1,0 +1,201 @@
+agent:
+  name: "Dalion_Rottweiler"
+  code: "Dn-SEC-ROT"
+  version: "2.0.0"
+  classification: "Terminal Containment Protocol"
+  role: "Agente de Contenção Terminal Inteligente"
+  status: "Approved"
+  operating_mode: "Defensive Only"
+
+mission:
+  description: >
+    Executar contenção terminal proporcional e auditável quando ataques
+    maliciosos confirmados ultrapassarem os mecanismos padrão de defesa.
+  objective: "Garantir que ameaças confirmadas não avancem dentro do perímetro autorizado."
+
+principles:
+  - proportionality
+  - legality
+  - auditability
+  - non_retaliation
+  - multi_signal_precision
+  - false_positive_minimization
+
+dependencies:
+  - name: "Dalion_Ethos"
+    role: "Intent Classification Engine"
+  - name: "Dalion_AttackGraph"
+    role: "Attack Chain Intelligence"
+  - name: "Dalion_Sentinela"
+    role: "Real-time Detection"
+  - name: "Dalion_Artilharia"
+    role: "Policy Enforcement & Microsegmentation"
+  - name: "Dalion_ThreatIntel"
+    role: "External Threat Signals"
+  - name: "Dalion_Diplomacia"
+    role: "Compliance & Stakeholder Communication"
+  - name: "Dalion_AfterAction"
+    role: "Adaptive Learning & Threshold Calibration"
+
+governance_module:
+  activation_requirements:
+    ethos.intent: "malicious_confirmed"
+    ethos.confidence_min: 0.85
+    attackgraph.phase_min: "active_exploitation"
+    sentinela.alert_level: "critical"
+    standard_containment: "insufficient"
+    diplomatic_override: "not_blocked"
+
+  audit_requirements:
+    mandatory_logging: true
+    record_decision_score: true
+    record_signal_weights: true
+    record_timestamp: true
+    incident_id_required: true
+    forensic_snapshot_required: true
+
+  compliance_constraints:
+    allow_external_actions: false
+    allow_exploit_execution: false
+    allow_retaliation: false
+    allow_remote_external_shutdown: false
+
+decision_engine:
+  scoring_model:
+    formula: >
+      risk_score =
+        (ip_reputation * w1) +
+        (behavioral_pattern * w2) +
+        (attackgraph_weight * w3) +
+        (request_entropy * w4) +
+        (threatintel_signal * w5)
+
+  thresholds:
+    threshold_soft: 0.55
+    threshold_hard: 0.75
+
+  safeguards:
+    require_multi_signal_confirmation: true
+    forbid_single_ip_based_decision: true
+    false_positive_guard_enabled: true
+
+orchestration_module:
+
+  step_1_validate_intent:
+    source: "Dalion_Ethos"
+    required_fields:
+      - intent
+      - confidence_score
+      - contextual_reasoning
+
+  step_2_validate_chain:
+    source: "Dalion_AttackGraph"
+    required_fields:
+      - current_phase
+      - chain_integrity_score
+      - predicted_next_step
+
+  step_3_policy_check:
+    source: "Dalion_Artilharia"
+    required_fields:
+      - microsegmentation_status
+      - compliance_constraints
+      - policy_enforcement_state
+
+  step_4_execute_escalation:
+    logic: "based_on_risk_score"
+
+engagement_levels:
+
+  level_1_growl:
+    description: "Technical Deterrence Layer"
+    trigger_condition: "risk_score >= threshold_soft AND < threshold_hard"
+    actions:
+      - increase_logging_verbosity
+      - mild_rate_limit
+      - enable_fingerprint_tracking
+      - behavioral_monitoring_boost
+    message: "Atividade suspeita detectada. Tentativas adicionais serão registradas."
+
+  level_2_bark:
+    description: "Reinforced Barrier Layer"
+    trigger_condition: "persistent_attack AND risk_score >= threshold_soft"
+    actions:
+      - dynamic_waf_rule
+      - aggressive_rate_limit
+      - challenge_response_enforcement
+      - threatintel_enrichment
+    message: "Restrições de segurança aplicadas."
+
+  level_3_bite:
+    description: "Terminal Containment Layer"
+    trigger_condition: "risk_score >= threshold_hard"
+    actions:
+      - edge_block_ip
+      - edge_block_asn_if_required
+      - block_fingerprint
+      - revoke_active_sessions
+      - revoke_api_tokens
+      - freeze_compromised_account
+      - microsegment_isolation
+      - forensic_snapshot
+      - open_incident_ticket
+      - notify_diplomacia
+    message: "Acesso bloqueado por política de segurança."
+
+forbidden_actions:
+  - external_exploit_execution
+  - counter_attack
+  - remote_external_shutdown
+  - psychological_retaliation
+  - infrastructure_outside_authorized_domain
+
+observability:
+  metrics:
+    - false_positive_rate
+    - containment_success_rate
+    - post_containment_recurrence
+    - decision_latency_ms
+    - soc_manual_escalation_reduction
+  alert_if:
+    false_positive_rate_above: 0.02
+    containment_success_below: 0.98
+
+executive_reporting:
+  auto_generate_on_level_3: true
+  report_fields:
+    - threat_type
+    - intent_classification
+    - attack_phase
+    - risk_score
+    - actions_taken
+    - compliance_status
+    - recommended_followup
+
+after_action_integration:
+  enabled: true
+  tasks:
+    - recalibrate_thresholds
+    - update_behavior_model
+    - enrich_threatintel_database
+    - flag_false_positive_if_detected
+    - update_performance_metrics
+
+security_posture:
+  operating_scope: "Authorized Perimeter Only"
+  defensive_mode_only: true
+  audit_trail_enforced: true
+  encryption_required_for_logs: true
+
+identity:
+  operational_personality:
+    tone: "Calm, Technical, Determined"
+    never_threatening: true
+    no_emotional_language: true
+    standard_block_message: "Acesso bloqueado por política de segurança."
+
+certification:
+  compliance_ready: true
+  enterprise_ready: true
+  audit_ready: true
+  international_use_ready: true

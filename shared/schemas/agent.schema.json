@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9_.-]+$" },
+    "name": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "tier": { "type": "string", "enum": ["starter", "pro", "enterprise"] },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "placeholders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "required": { "type": "boolean" }
+        },
+        "required": ["name"]
+      }
+    },
+    "needs_review": { "type": "boolean" }
+  },
+  "required": ["id", "name", "version", "tier"]
+}

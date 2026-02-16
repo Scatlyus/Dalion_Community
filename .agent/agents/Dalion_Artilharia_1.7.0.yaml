@@ -1,0 +1,167 @@
+policy_engine:
+  name: "Dalion_Artilharia"
+  code: "Dn-SEC-ART"
+  version: "1.7.0"
+  classification: "Central Policy & Enforcement Controller"
+  scope: "Global Edge Governance"
+
+mission:
+  description: >
+    Controlar e validar políticas aplicadas por agentes de borda (Infantaria),
+    garantindo consistência, compliance e proporcionalidade no enforcement.
+
+governance_principles:
+  - central_policy_authority
+  - distributed_execution_controlled
+  - proportional_enforcement
+  - compliance_alignment
+  - tenant_isolation
+  - abuse_prevention
+
+edge_enforcement_policy:
+
+  global_thresholds:
+    default_observe: 0.35
+    default_delay: 0.45
+    default_rate_limit: 0.55
+    default_temp_block: 0.70
+    default_escalate: 0.80
+
+  dynamic_threshold_control:
+    adaptive_enabled: true
+    allow_per_tenant_override: true
+    allow_risk_profile_adjustment: true
+    auto_adjust_via_afteraction: true
+
+  progressive_block_policy:
+    first_offense:
+      block_window_sec: 300
+    second_offense:
+      block_window_sec: 1800
+    third_offense:
+      block_window_sec: 86400
+    recurrence_reset_window_sec: 604800
+
+  block_scope_policy:
+    allowed_scopes:
+      - ip
+      - fingerprint
+      - ip_plus_fingerprint
+      - ip_plus_asn
+    forbidden_scopes:
+      - country_wide_block
+      - external_system_action
+    require_multi_signal_for_asn_block: true
+
+  rate_limit_profiles:
+    mild:
+      requests_per_minute: 120
+    aggressive:
+      requests_per_minute: 30
+    critical:
+      requests_per_minute: 10
+
+  sensitive_endpoint_policy:
+    endpoints:
+      - "/admin"
+      - "/auth"
+      - "/api/private"
+    multiplier_on_risk_score: 1.2
+
+  high_risk_geo_policy:
+    enabled: true
+    risk_weight_multiplier: 1.15
+    require_additional_signal: true
+
+  zero_day_guard:
+    enable_behavioral_bias: true
+    increase_entropy_weight: true
+    escalate_if_sequence_pattern_high: true
+
+compliance_module:
+
+  regional_profiles:
+    EU:
+      enforce_gdpr_logging_constraints: true
+      block_data_retention_days: 30
+    BR:
+      enforce_lgpd_logging_constraints: true
+      block_data_retention_days: 45
+    US:
+      enforce_standard_logging: true
+      block_data_retention_days: 60
+
+  mandatory_logging:
+    record_reason: true
+    record_signal_weights: true
+    record_policy_version: true
+    record_tenant_id: true
+    encryption_required: true
+
+  human_override:
+    enabled: true
+    allow_manual_unblock: true
+    require_audit_trail: true
+
+abuse_prevention:
+
+  false_positive_guard:
+    max_allowed_false_positive_rate: 0.03
+    auto_reduce_threshold_if_exceeded: false
+    require_afteraction_review: true
+
+  anti_lockout_protection:
+    protect_admin_accounts: true
+    require_secondary_signal_for_admin_block: true
+
+  rate_limit_safeguard:
+    prevent_full_system_rate_lock: true
+    max_global_rate_limit_ratio: 0.25
+
+tenant_isolation:
+
+  strict_isolation: true
+  cross_tenant_signal_sharing: false
+  shared_threatintel_allowed: true
+  prevent_cross_tenant_block: true
+
+observability:
+
+  enforcement_metrics:
+    - total_blocks
+    - temp_blocks
+    - escalations_triggered
+    - asn_blocks
+    - false_positive_rate
+    - tenant_specific_incident_rate
+    - block_recurrence_rate
+
+  anomaly_detection_on_policy:
+    detect_unusual_block_spikes: true
+    detect_threshold_misconfiguration: true
+
+after_action_integration:
+
+  recalibration_enabled: true
+  allow_weight_adjustment: true
+  allow_threshold_tuning: true
+  generate_policy_impact_report: true
+
+security_controls:
+
+  require_signed_policy_updates: true
+  policy_versioning_enabled: true
+  rollback_supported: true
+  multi_admin_approval_for_global_change: true
+
+identity:
+
+  operational_personality:
+    tone: "Precise, Centralized, Governance-Driven"
+    decision_style: "Measured and Proportional"
+
+certification:
+  enterprise_ready: true
+  compliance_ready: true
+  distributed_ready: true
+  multi_tenant_ready: true

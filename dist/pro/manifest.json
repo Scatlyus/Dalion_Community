@@ -1,0 +1,23 @@
+{
+  "pack_name": "Neuroflux Pro",
+  "tier": "pro",
+  "version": "1.0.0",
+  "build_date": "2026-02-12T22:42:53.052Z",
+  "files": [
+    {
+      "path": "examples\\dalion_attackgraph\\input_01.json",
+      "hash": "a045089175757af20ccebe482c4ae3f96c889333bc1bc4e6c80c0a8db858639b",
+      "size": 210
+    },
+    {
+      "path": "examples\\dalion_attackgraph\\output_01.json",
+      "hash": "79afad280abdd3f52d9fbe1180a50cbce52e868986a0e3ee5c58a726069eeba3",
+      "size": 215
+    },
+    {
+      "path": "pack.yaml",
+      "hash": "79b56db270ff2ff10602d5c600e27ea20811f9bc74c374988d86e40d7cd69350",
+      "size": 233
+    }
+  ]
+}

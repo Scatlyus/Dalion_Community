@@ -1,0 +1,21 @@
+{
+    "objective": "Investigar e-mails suspeitos e possíveis conexões de rede externas originadas de links maliciosos.",
+    "logs": [
+        {
+            "source": "KC7_EmailLogs",
+            "timestamp": "2026-02-12T10:15:30Z",
+            "sender": "it-support@microsoft-security-verify.com",
+            "recipient": "executive-vp@company.com",
+            "subject": "URGENTE: Verificação de Segurança Necessária",
+            "link": "http://secure-login-portal.net/auth"
+        },
+        {
+            "source": "KC7_OutboundNetworkEvents",
+            "timestamp": "2026-02-12T10:18:45Z",
+            "source_ip": "10.0.0.45",
+            "dest_ip": "185.123.45.67",
+            "dest_port": 80,
+            "bytes_sent": 4500
+        }
+    ]
+}

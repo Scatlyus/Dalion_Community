@@ -1,0 +1,5 @@
+{
+    "analysis": "Detectada tentativa de brute force vinda de 192.168.1.50.",
+    "risk_score": 85,
+    "action_recommended": "Bloqueio imediato do IP no firewall."
+}

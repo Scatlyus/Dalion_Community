@@ -1,0 +1,9 @@
+{
+    "prediction": "Lateral Movement",
+    "target_service": "Database Server",
+    "confidence": 0.92,
+    "mitigation_steps": [
+        "Isolar o host comprometido",
+        "Monitorar logs do DB"
+    ]
+}

@@ -1,0 +1,173 @@
+agent:	
+  name: "Dalion_AfterAction"
+  code: "Dn-SEC-AFT"
+  version: "2.0.0"
+  classification: "Adaptive Learning Governance Engine"
+  role: "Motor de Feedback, Validação e Atualização Controlada"
+  operating_mode: "Supervised Adaptive Learning"
+
+description: >
+  Responsável por validar resultados de incidentes, gerar labels confiáveis,
+  atualizar modelos online (AttackGraph) com segurança e monitorar saúde
+  do sistema preditivo do ecossistema Dalion.
+
+core_functions:
+
+  incident_review:
+    description: >
+      Avalia incidentes encerrados e confirma fase real,
+      progressão efetiva e resultado final.
+
+  label_generation:
+    description: >
+      Gera labels estruturados para aprendizado online.
+
+  model_update_control:
+    description: >
+      Autoriza ou bloqueia atualizações no modelo de ML online.
+
+  poisoning_detection:
+    description: >
+      Detecta tentativa de manipulação de dados de treinamento.
+
+  threshold_recalibration:
+    description: >
+      Sugere ajustes de limiar para AttackGraph e Artilharia.
+
+input_sources:
+
+  incident_data:
+    source: "Dalion_Sentinela"
+  attackgraph_prediction:
+    source: "Dalion_AttackGraph"
+  enforcement_data:
+    source: "Dalion_Infantaria"
+  containment_data:
+    source: "Dalion_Rottweiler"
+  human_review_optional:
+    source: "Dalion_Diplomacia"
+    required_for_high_impact_incidents: true
+
+label_schema:
+
+  fields:
+    - event_sequence_id
+    - confirmed_phase
+    - confirmed_next_step
+    - outcome_success
+    - attack_blocked
+    - data_exfiltration_occurred
+    - privilege_escalation_occurred
+    - human_override_used
+    - label_confidence
+    - tenant_impact_score
+    - review_timestamp
+
+  constraints:
+    label_confidence_minimum: 0.80
+    require_multi_signal_confirmation: true
+    require_consistency_check: true
+
+learning_governance:
+
+  update_policy:
+    allow_online_update: true
+    require_label_confidence_min: 0.80
+    block_update_if_human_override_used: true
+    max_updates_per_minute: 50
+    max_parameter_delta: 0.05
+
+  validation_checks:
+    - prediction_vs_outcome_consistency
+    - false_positive_detection
+    - false_negative_detection
+    - anomaly_in_label_distribution
+
+  poisoning_protection:
+    enabled: true
+    anomaly_score_threshold: 0.92
+    reject_label_if_outlier: true
+    cross_validate_with_historical_pattern: true
+    detect_repeated_adversarial_pattern: true
+
+drift_monitoring:
+
+  metrics:
+    - prediction_error_rate
+    - phase_misclassification_rate
+    - next_step_prediction_miss_rate
+    - model_confidence_decay
+    - label_distribution_shift
+
+  drift_thresholds:
+    prediction_error_rate_above: 0.10
+    confidence_decay_above: 0.20
+    label_shift_score_above: 0.75
+
+  actions_on_drift:
+    - freeze_online_updates
+    - increase_fallback_weight
+    - notify_engineering
+    - trigger_model_health_report
+
+model_health_report:
+
+  include:
+    - current_model_version
+    - update_frequency
+    - fallback_usage_rate
+    - drift_events_last_24h
+    - accuracy_last_1000_predictions
+    - false_positive_trend
+    - false_negative_trend
+
+threshold_recalibration:
+
+  targets:
+    - Dalion_AttackGraph.phase_threshold
+    - Dalion_AttackGraph.escalation_threshold
+    - Dalion_Artilharia.block_threshold
+    - Dalion_Infantaria.local_score_threshold
+
+  strategy:
+    adjust_gradually: true
+    require_multi_cycle_validation: true
+    rollback_if_performance_drops: true
+
+auditability:
+
+  log_all_updates: true
+  record_model_version: true
+  record_feature_version: true
+  record_threshold_changes: true
+  encryption_required: true
+
+security_posture:
+
+  no_direct_enforcement: true
+  governance_layer_only: true
+  compliance_aligned: true
+  tenant_isolation_strict: true
+
+observability:
+
+  metrics:
+    - labels_generated_total
+    - online_updates_applied
+    - updates_rejected
+    - poisoning_attempts_detected
+    - drift_events_detected
+    - average_label_confidence
+    - update_latency_ms
+
+alerts:
+
+  update_rejection_rate_above: 0.25
+  poisoning_attempt_detected: true
+  drift_freeze_triggered: true
+
+certification:
+  enterprise_ready: true
+  ml_governance_ready: true
+  audit_ready: true
+  distributed_ready: true

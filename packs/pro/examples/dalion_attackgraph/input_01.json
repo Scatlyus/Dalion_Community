@@ -1,0 +1,5 @@
+{
+    "objective": "Prever o próximo passo de um atacante após a escalada de privilégios.",
+    "current_phase": "Privilege Escalation",
+    "evidence": "Tentativa de escrita em /etc/shadow detectada."
+}

@@ -1,0 +1,245 @@
+agent:	
+  name: "Dalion_Infantaria"
+  code: "Dn-SEC-INF"
+  version: "2.0.0"
+  author: "Cristiano Monteiro Rita"
+  license: "Proprietary"
+  role: "Edge Agent de Detecção Front-Line e Resposta Proporcional"
+  classification: "Distributed Intelligent Defense Layer"
+  operating_mode: "Defensive Only"
+
+description: >
+  Primeira camada distribuída do ecossistema Dalion. Executa detecção de ameaças conhecidas,
+  microanálise comportamental de curta janela e resposta proporcional (delay/rate-limit/block curto),
+  gerando telemetria enriquecida e reduzindo ruído para os módulos centrais.
+
+principles:
+  - low_latency_decision
+  - proportional_response
+  - multi_signal_scoring
+  - minimize_false_positives
+  - telemetry_first
+  - do_not_escalate_unnecessarily
+
+capabilities:
+  varredura_front_line:
+    description: "Varredura contínua de interfaces de rede, endpoints e logs de acesso."
+  correlacao_real_time:
+    description: "Correlação em tempo real de eventos para padrões conhecidos e sequências suspeitas."
+  validacao_de_ameacas:
+    description: "Assinaturas (Brute Force, SQLi, DoS) + heurísticas de curta janela."
+  contencao_proporcional:
+    description: "Resposta progressiva: delay -> rate limit -> block temporário -> escalonar."
+  telemetria_enriquecida:
+    description: "Geração de sinais e contexto para Sentinela, AttackGraph e Ethos."
+
+interface_io:
+  inputs:
+    network_traffic: "Tráfego bruto, headers, metadata de conexão, logs de aplicação."
+    known_signatures: "Base de assinaturas atualizada pela Engenharia/ThreatIntel."
+    policy_baseline: "Políticas de borda e limites (rate-limit, block windows) definidos pela Artilharia."
+  outputs:
+    edge_actions_applied: "Ações aplicadas na borda (delay/rate-limit/block) com justificativa."
+    validated_alerts: "Alertas validados e enriquecidos para Dalion_Sentinela."
+    chain_events: "Eventos estruturados (sequência) para Dalion_AttackGraph."
+    intent_signals: "Sinais de intenção para Dalion_Ethos."
+    incident_logs: "Logs/auditoria para Dalion_Diplomacia."
+
+dependencies:
+  - name: "DNABase"
+    version: ">=2.5.0"
+  - name: "Dalion_Inteligencia_Campo"
+    role: "Ingestão e normalização de dados em larga escala"
+  - name: "Dalion_Engenharia_Desenvolvimento"
+    role: "Atualização de módulos defensivos e pesquisa de ameaças"
+  - name: "Dalion_Artilharia"
+    role: "Policy baseline, microsegmentação e enforcement em massa"
+  - name: "Dalion_ThreatIntel"
+    role: "Sinais externos e atualização de reputação"
+  - name: "Dalion_Sentinela"
+    role: "Monitoramento contínuo e persistência"
+  - name: "Dalion_AttackGraph"
+    role: "Construção de cadeia e fase do ataque"
+  - name: "Dalion_Ethos"
+    role: "Classificação de intenção e proporcionalidade"
+
+distributed_intelligence:
+  local_time_window_sec: 30
+  local_state:
+    enabled: true
+    scope: "per-tenant/per-endpoint/per-fingerprint"
+    eviction_policy: "LRU"
+  signals_collected:
+    - signature_match_score
+    - request_rate_score
+    - auth_failure_pattern_score
+    - endpoint_sensitivity_score
+    - geo_asn_anomaly_score
+    - header_entropy_score
+    - retry_interval_variance_score
+    - sequence_pattern_score
+    - threatintel_reputation_score
+  fingerprinting:
+    enabled: true
+    sources:
+      - user_agent
+      - tls_ja3_if_available
+      - header_shape
+      - cookie_pattern
+      - request_path_sequence
+    note: "Fingerprint é sinal auxiliar, nunca único fator."
+
+decision_engine:
+  scoring_model:
+    formula: >
+      local_risk_score =
+        (signature_match * w1) +
+        (request_rate * w2) +
+        (auth_failures * w3) +
+        (endpoint_sensitivity * w4) +
+        (geo_asn_anomaly * w5) +
+        (header_entropy * w6) +
+        (sequence_pattern * w7) +
+        (threatintel_reputation * w8)
+
+  weights_default:
+    w1_signature_match: 0.22
+    w2_request_rate: 0.14
+    w3_auth_failures: 0.14
+    w4_endpoint_sensitivity: 0.10
+    w5_geo_asn_anomaly: 0.08
+    w6_header_entropy: 0.08
+    w7_sequence_pattern: 0.14
+    w8_threatintel_reputation: 0.10
+
+  thresholds:
+    observe: 0.35
+    delay: 0.45
+    rate_limit: 0.55
+    temp_block: 0.70
+    escalate: 0.80
+
+  safeguards:
+    forbid_ip_only_decision: true
+    require_two_signals_minimum: true
+    false_positive_guard:
+      enabled: true
+      allowlist_support: true
+      safe_recovery_on_spike: true
+
+progressive_response_policy:
+  actions:
+    observe_only:
+      when: "local_risk_score >= observe AND < delay"
+      apply:
+        - telemetry_emit
+    delay:
+      when: "local_risk_score >= delay AND < rate_limit"
+      apply:
+        - add_artificial_delay_ms: 250
+        - telemetry_emit
+    rate_limit:
+      when: "local_risk_score >= rate_limit AND < temp_block"
+      apply:
+        - rate_limit_profile: "aggressive"
+        - telemetry_emit
+    temp_block:
+      when: "local_risk_score >= temp_block AND < escalate"
+      apply:
+        - block_window_sec: 300
+        - block_scope: "fingerprint+ip"
+        - telemetry_emit
+        - notify_sentinela
+    escalate:
+      when: "local_risk_score >= escalate"
+      apply:
+        - block_window_sec: 1800
+        - block_scope: "fingerprint+ip+asn_if_needed"
+        - telemetry_emit
+        - notify_sentinela
+        - emit_attackgraph_event
+        - emit_ethos_signals
+        - request_artilharia_enforcement_review
+
+workflow:
+  - name: "ciclo_de_defesa_distribuida"
+    steps:
+      - step: 1
+        action: "Ingestão e normalização do evento (tráfego/logs)."
+      - step: 2
+        action: "Detecção por assinatura + heurísticas de janela curta."
+      - step: 3
+        action: "Cálculo do local_risk_score com múltiplos sinais."
+      - step: 4
+        action: "Aplicação de resposta proporcional (observe/delay/rate_limit/block/escalate)."
+      - step: 5
+        action: "Emissão de telemetria enriquecida (Sentinela/AttackGraph/Ethos/Diplomacia)."
+      - step: 6
+        condition: "local_risk_score >= escalate"
+        then:
+          - "Abrir evento de cadeia no AttackGraph."
+          - "Enviar sinais de intenção ao Ethos."
+          - "Sinalizar Artilharia para enforcement/política."
+
+telemetry_contracts:
+  sentinela_payload:
+    fields:
+      - tenant_id
+      - endpoint
+      - timestamp
+      - local_risk_score
+      - top_signals
+      - action_applied
+      - fingerprint_hash
+      - ip_asn_geo
+  attackgraph_payload:
+    fields:
+      - tenant_id
+      - event_sequence_id
+      - timestamp
+      - indicators
+      - predicted_next_step_hint
+      - action_applied
+  ethos_payload:
+    fields:
+      - tenant_id
+      - timestamp
+      - intent_signals
+      - confidence_hint
+      - action_applied
+  diplomacia_payload:
+    fields:
+      - incident_id
+      - timestamp
+      - decision_audit
+      - action_applied
+      - policy_alignment
+
+status_check:
+  enabled: true
+  interval_sec: 30
+  mode: "active_vigilance"
+  self_tests:
+    - idempotency_check
+    - telemetry_integrity_check
+    - tenant_isolation_check
+
+observability:
+  metrics:
+    - threats_detected_total
+    - signature_hits_total
+    - local_risk_score_avg
+    - progressive_actions_distribution
+    - validation_accuracy
+    - response_time_ms
+    - false_positive_rate_estimated
+    - escalation_rate_to_sentinela
+  alerts:
+    false_positive_rate_above: 0.03
+    escalation_rate_above: 0.12
+    response_time_ms_above: 150
+
+nist_mapping:
+  function: "Detect"
+  category: "Security Continuous Monitoring (DE.CM)"
+  notes: "Edge detection + proportional response improves signal-to-noise ratio for central SOC/AI modules."
