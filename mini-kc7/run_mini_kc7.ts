@@ -102,7 +102,7 @@ async function main() {
         const d8Signals = await d8.lookup(String(target));
         const enrichedIOC: any = {
             ioc_value: String(target),
-            ioc_type: ev.context?.dst_ip ? "ip" : "domain",
+            ioc_type: ev.context?.url ? 'url' : ev.context?.dst_ip ? 'IP' : 'domain',
             threat_score: 0,
             tags: d2Result.tags || [], // Carry over D2 heuristic tags
             enrichment: { virustotal: {}, abuseipdb: {} },
@@ -135,14 +135,13 @@ async function main() {
             enrichedIOC.tags = [...(enrichedIOC.tags || []), ...d4Intel.signals.map(s => s.name)];
         }
 
-        // Initial Classification for PsySec context
-        const initialClass: ClassificationResult = await ethos.classify(enrichedIOC);
-
+        // Classification for PsySec context
+        const initialClass = await ethos.classify(enrichedIOC);
         const d7Analysis = psySec.analyze(d2Result, initialClass);
         enrichedIOC.psysec = d7Analysis;
         enrichedIOC.tags = [...(enrichedIOC.tags || []), ...d7Analysis.profile.tags];
 
-        // --- RE-CLASSIFICATION (D10 with full context) ---
+        // --- CLASSIFICATION (D10 with full context) ---
         const finalClass: ClassificationResult = await ethos.classify(enrichedIOC);
 
         // --- D12 decide ---

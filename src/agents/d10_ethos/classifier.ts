@@ -105,7 +105,10 @@ export class ThreatClassifier {
             description: 'Domain looks algorithmically generated',
             check: (enriched) => {
                 if (enriched.ioc_type !== 'domain') return false;
-                const domain = enriched.ioc_value.split('.')[0];
+                const hostname = enriched.ioc_value.toLowerCase().replace(/\.$/, '');
+                const labels = hostname.split('.');
+                if (labels.length < 2 || labels.some(label => !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label))) return false;
+                const domain = labels[0];
                 // Relaxed DGA: >10 chars, mixed alphanumeric without separators
                 const info = domain.length > 10 && !domain.includes('-') && !domain.includes('_');
                 // Check for randomness: mixed numbers and letters

@@ -4,11 +4,45 @@
  * Analyzes behavioral signals to profile the threat actor's intent and skill.
  */
 
-import { DetectionResult } from '../d2_sentinela/types';
+import { DetectionResult, SecurityEvent } from '../d2_sentinela/types';
 import { ClassificationResult, ThreatType } from '../d10_ethos/types';
 import { PsySecAnalysis, IntentType, SkillLevel, AttackerProfile } from './types';
 
 export class DalionPsySec {
+    /**
+     * Profile an actor based on a history of events
+     */
+    public profileActor(events: SecurityEvent[]): AttackerProfile {
+        if (events.length === 0) {
+            return {
+                intent: IntentType.UNKNOWN,
+                skill_level: SkillLevel.BEGINNER,
+                persistence_score: 0,
+                focus: 'wide',
+                tags: ['no_history']
+            };
+        }
+
+        const uniqueTargets = new Set(events.map(e => e.destination_ip).filter(Boolean));
+        const failCount = events.filter(e => e.status === 'failure' || e.status === 'blocked').length;
+        const totalEvents = events.length;
+
+        // Cálculo de persistência: proporção de falhas e volume
+        const persistence = Math.min(1.0, (failCount / totalEvents) + (totalEvents / 20));
+
+        // Inferência de foco e skill
+        const isTargeted = uniqueTargets.size > 0 && uniqueTargets.size <= 2 && totalEvents > 3;
+        const skill = totalEvents > 10 ? SkillLevel.ADVANCED : totalEvents > 5 ? SkillLevel.INTERMEDIATE : SkillLevel.BEGINNER;
+
+        return {
+            intent: uniqueTargets.size === 0 ? IntentType.UNKNOWN : isTargeted ? IntentType.ESPIONAGE : IntentType.DISRUPTION,
+            skill_level: skill,
+            persistence_score: persistence,
+            focus: isTargeted ? 'targeted' : 'wide',
+            tags: totalEvents > 5 ? ['persistent_actor'] : ['exploratory_phase']
+        };
+    }
+
     /**
      * Analyze intent based on tactical signals
      */
