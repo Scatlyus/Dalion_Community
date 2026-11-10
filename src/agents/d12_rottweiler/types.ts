@@ -5,6 +5,8 @@ export type SecurityAction = 'ALLOW' | 'MONITOR' | 'QUARANTINE' | 'BLOCK' | 'ISO
 
 export interface StrategicDecision {
     action: SecurityAction;
+    /** IOC for BLOCK/QUARANTINE, or source host for ISOLATE_HOST. */
+    target: string;
     reason: string;
     priority: number; // 0..100
     source_signals: {

@@ -92,20 +92,21 @@ export class AbuseIPDBClient {
         throw error;
       }
 
-      if (error.name === 'AbortError') {
+      const cause = error instanceof Error ? error : new Error(String(error));
+      if (cause.name === 'AbortError') {
         throw new EnrichmentError(
           `AbuseIPDB request timeout (${this.timeout}ms)`,
           'AbuseIPDB',
           ip,
-          error
+          cause
         );
       }
 
       throw new EnrichmentError(
-        `Failed to check IP via AbuseIPDB: ${error.message}`,
+        `Failed to check IP via AbuseIPDB: ${cause.message}`,
         'AbuseIPDB',
         ip,
-        error
+        cause
       );
     }
   }

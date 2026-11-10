@@ -78,20 +78,21 @@ export class VirusTotalClient {
         throw error;
       }
 
-      if (error.name === 'AbortError') {
+      const cause = error instanceof Error ? error : new Error(String(error));
+      if (cause.name === 'AbortError') {
         throw new EnrichmentError(
           `VirusTotal request timeout (${this.timeout}ms)`,
           'VirusTotal',
           domain,
-          error
+          cause
         );
       }
 
       throw new EnrichmentError(
-        `Failed to enrich domain via VirusTotal: ${error.message}`,
+        `Failed to enrich domain via VirusTotal: ${cause.message}`,
         'VirusTotal',
         domain,
-        error
+        cause
       );
     }
   }
@@ -145,20 +146,21 @@ export class VirusTotalClient {
         throw error;
       }
 
-      if (error.name === 'AbortError') {
+      const cause = error instanceof Error ? error : new Error(String(error));
+      if (cause.name === 'AbortError') {
         throw new EnrichmentError(
           `VirusTotal request timeout (${this.timeout}ms)`,
           'VirusTotal',
           ip,
-          error
+          cause
         );
       }
 
       throw new EnrichmentError(
-        `Failed to enrich IP via VirusTotal: ${error.message}`,
+        `Failed to enrich IP via VirusTotal: ${cause.message}`,
         'VirusTotal',
         ip,
-        error
+        cause
       );
     }
   }

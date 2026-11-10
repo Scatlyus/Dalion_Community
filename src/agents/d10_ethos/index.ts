@@ -18,9 +18,6 @@ export class DalionEthos {
      * Classifies an enriched IOC into a specific threat category
      */
     async classify(enriched: EnrichedIOC): Promise<ClassificationResult> {
-        console.log(`   [D10 Debug] Classifying ${enriched.ioc_value} | Tags: [${enriched.tags?.join(', ') || ''}] | Score: ${enriched.threat_score}`);
-        console.log(`[D10 Ethos] Classifying signal for ${enriched.ioc_value}...`);
-
         const result = await this.classifier.classify(enriched);
 
         // Apply config-based logic

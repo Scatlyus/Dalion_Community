@@ -1,6 +1,10 @@
 {
+  "version": "2.5.0",
   "scripts": {
     "test": "jest",
+    "test:unit": "jest --runInBand",
+    "test:suricata": "npx ts-node --transpile-only tools/ingest_suricata_eve.ts --file tools/sample_eve.json --strict --limit 100",
+    "build": "tsc -p .",
     "test:watch": "jest --watch",
     "test:d2": "npx ts-node test_d2_real.ts"
   },
@@ -21,6 +25,7 @@
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "@types/node-fetch": "^2.6.13",
+    "ioredis-mock": "^8.13.1",
     "jest": "^29.0.0",
     "ts-jest": "^29.0.0",
     "ts-node": "^10.9.0",

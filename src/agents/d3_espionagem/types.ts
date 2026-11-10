@@ -1,3 +1,5 @@
+import { SecurityEvent } from '../d2_sentinela/types';
+
 /**
  * Type definitions for Dalion D3 Espionagem
  * Threat Intelligence Enrichment Agent
@@ -12,6 +14,7 @@ export interface IOC {
   ioc_value: string;
   is_anomaly: boolean;
   context?: Record<string, any>;
+  event?: SecurityEvent; // Context event (optional input, required in output)
 }
 
 export interface EnrichmentRequest {
@@ -26,6 +29,7 @@ export interface EnrichmentRequest {
 // ============================================
 
 export interface EnrichedIOC extends IOC {
+  event: SecurityEvent;
   enrichment: {
     virustotal?: VTEnrichment;
     abuseipdb?: AbuseIPDBEnrichment;
@@ -159,7 +163,10 @@ export interface CacheEntry {
   ioc_type: string;
   enrichment: EnrichedIOC['enrichment'];
   threat_score: number;
+  confidence: number;
   reputation: string;
+  tags?: string[];
+  source?: string;
   cached_at: string;
   ttl: number; // seconds
 }

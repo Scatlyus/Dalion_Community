@@ -1,9 +1,10 @@
 import { EpistemicSignal, DecisionRecord } from '../../types/omega';
+import { DalionEventBus } from '../bus/DalionEventBus';
 
 export class SovereignTriad {
-    private signals: EpistemicSignal[] = [];
+    private signals = new Map<string, { tx?: EpistemicSignal; te?: EpistemicSignal }>();
 
-    constructor() {
+    constructor(private readonly bus?: DalionEventBus) {
         console.log("[Ω SovereignTriad] Inicializado. Aguardando convergência da Tríade...");
     }
 
@@ -11,20 +12,28 @@ export class SovereignTriad {
      * Registra sinais vindos do Olho (D2 - TX) ou da Mente (D10 - TE)
      */
     public async registerSignal(signal: EpistemicSignal): Promise<void> {
-        this.signals.push(signal);
+        const { event_id, target_ip } = signal.evidence || {};
+        if (typeof event_id !== 'string' || !event_id.trim() || typeof target_ip !== 'string' || !target_ip.trim() || target_ip === 'unknown') return;
+        if (signal.tier !== 'TX.Ω' && signal.tier !== 'TE.Ω') return;
+        const key = JSON.stringify([event_id, target_ip]);
+        const pair = this.signals.get(key) || {};
+        if (signal.tier === 'TX.Ω') pair.tx = signal;
+        else pair.te = signal;
+        this.signals.set(key, pair);
+        if (this.signals.size > 1000) this.signals.delete(this.signals.keys().next().value!);
         console.log(`[Ω Triad] Sinal recebido de ${signal.agentId} (${signal.tier}) | Confiança: ${signal.confidence}`);
 
-        await this.evaluateConsensus();
+        await this.evaluateConsensus(key);
     }
 
     /**
      * Avalia se há consenso soberano para disparar o "Bite" (Mandíbula)
      */
-    private async evaluateConsensus(): Promise<void> {
-        const txSignal = this.signals.find(s => s.tier === 'TX.Ω');
-        const teSignal = this.signals.find(s => s.tier === 'TE.Ω');
+    private async evaluateConsensus(key: string): Promise<void> {
+        const { tx: txSignal, te: teSignal } = this.signals.get(key) || {};
 
         if (txSignal && teSignal) {
+            this.signals.delete(key);
             const jointConfidence = (txSignal.confidence + teSignal.confidence) / 2;
 
             if (jointConfidence > 0.85) {
@@ -38,7 +47,7 @@ export class SovereignTriad {
 
     private async triggerBite(tx: EpistemicSignal, te: EpistemicSignal): Promise<void> {
         console.log("[Ω Action] Disparando D12_Rottweiler (TA.Ω) para execução de contenção...");
-        // Log de auditoria irretratável
+
         const record: DecisionRecord = {
             id: `Ω-${Date.now()}`,
             policy: "NET_EGRESS_TO_MALICIOUS_IP",
@@ -50,5 +59,9 @@ export class SovereignTriad {
         };
 
         console.log(`[Ω Audit] Ação registrada: ${JSON.stringify(record, null, 2)}`);
+
+        // Publica o consenso no barramento para que ArqosBridge e outros possam reagir
+        this.bus?.publish({ type: 'OMEGA_CONSENSUS', payload: record });
+
     }
 }

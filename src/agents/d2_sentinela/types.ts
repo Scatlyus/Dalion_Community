@@ -8,10 +8,10 @@ export interface SecurityEvent {
     status: 'success' | 'failure' | 'blocked' | 'allowed';
     severity: 'informational' | 'low' | 'medium' | 'high' | 'critical';
     message: string;
-    username?: string;
     user_agent?: string;
     file_path?: string;
     email_sender?: string;
+    metadata?: any; // Raw event data (e.g. Suricata EVE)
 }
 
 export interface IHistoryStore {

@@ -44,6 +44,7 @@ async function main() {
         // 2. A Mente Classifica (TE)
         // Mocking an EnrichedIOC for D10 based on D2 results
         const enriched: EnrichedIOC = {
+            event: log,
             ioc_value: log.source_ip,
             ioc_type: 'IP',
             is_anomaly: txResult.anomaly,

@@ -34,10 +34,14 @@ export class ThreatClassifier {
                 const isShortenedPhish = tags.includes('shortened_url') && tags.includes('phishing_keywords');
                 const isDGAPhish = tags.includes('dga_like_domain') && (enriched.source === 'DNS' || enriched.source === 'MAIL_GATEWAY');
 
+                // Active Heuristic: Typosquatting
+                const ioc = enriched.ioc_value.toLowerCase();
+                const typosquatting = /paypa1|g00gle|micr0soft|security-verify|secure-login/.test(ioc);
+
                 return (enriched.ioc_type === 'domain' && (vtCats.includes('phishing') || vtCats.includes('malicious'))) ||
                     tags.includes('embedded_pdf_phishing') ||
                     tags.includes('suspicious_process_spawn') ||
-                    isShortenedPhish || isDGAPhish;
+                    isShortenedPhish || isDGAPhish || typosquatting;
             },
             result: {
                 threat_type: ThreatType.PHISHING,
@@ -56,9 +60,13 @@ export class ThreatClassifier {
                 const vtCats = (enriched.enrichment?.virustotal?.categories || []).map(c => c.toLowerCase());
                 const tags = enriched.tags || [];
                 const ransomTerms = ['ransom', 'crypt', 'locky', 'wannacry', 'bitpaymer'];
+                // Check alert_category tag from Suricata
+                const hasRansomTag = tags.some(t => t.toLowerCase().includes('ransom'));
+
                 return ransomTerms.some(term => vtCats.some(cat => cat.includes(term))) ||
                     tags.includes('shadow_copy_deletion') ||
-                    tags.includes('ransomware_behavior');
+                    tags.includes('ransomware_behavior') ||
+                    hasRansomTag;
             },
             result: {
                 threat_type: ThreatType.RANSOMWARE,
@@ -87,6 +95,30 @@ export class ThreatClassifier {
                 mitre_tactics: ['TA0011'], // Command and Control
                 mitre_techniques: ['T1071'], // Application Layer Protocol
                 severity: 'critical',
+                recommended_action: 'block'
+            }
+        });
+
+        // 4.5 DGA Rule (Active Heuristic)
+        this.rules.push({
+            name: 'dga_heuristic_pattern',
+            description: 'Domain looks algorithmically generated',
+            check: (enriched) => {
+                if (enriched.ioc_type !== 'domain') return false;
+                const domain = enriched.ioc_value.split('.')[0];
+                // Relaxed DGA: >10 chars, mixed alphanumeric without separators
+                const info = domain.length > 10 && !domain.includes('-') && !domain.includes('_');
+                // Check for randomness: mixed numbers and letters
+                const hasNumbers = /[0-9]/.test(domain);
+                const hasLetters = /[a-z]/.test(domain);
+                // Weirdness: 4+ consonants OR mixed alphanumeric
+                const weirdness = /[bcdfghjklmnpqrstvwxyz]{4,}/.test(domain);
+                return info && (weirdness || (hasNumbers && hasLetters));
+            },
+            result: {
+                threat_type: ThreatType.C2,
+                mitre_tactics: ['TA0011'],
+                severity: 'high',
                 recommended_action: 'block'
             }
         });
@@ -131,6 +163,28 @@ export class ThreatClassifier {
     }
 
     async classify(enriched: EnrichedIOC): Promise<ClassificationResult> {
+        const tagsSet = new Set((enriched.tags || []).map((t: string) => t.toLowerCase()));
+        const sourceStr = String(enriched.context?.log_source_id ?? enriched.source ?? "").toUpperCase();
+
+        const isDNSorMail = sourceStr.includes("DNS") || sourceStr.includes("MAIL");
+        const hasPhishingSignals =
+            tagsSet.has("phishing_keywords") ||
+            tagsSet.has("shortened_url") ||
+            tagsSet.has("embedded_pdf_phishing") ||
+            tagsSet.has("invoice_phishing_campaign");
+
+        if (isDNSorMail && hasPhishingSignals) {
+            return {
+                threat_type: ThreatType.PHISHING,
+                confidence: 0.85,
+                mitre_tactics: ['TA0001'],
+                mitre_techniques: ['T1566'],
+                severity: 'high',
+                recommended_action: 'block',
+                tags: ['context_override_phishing']
+            };
+        }
+
         let finalResult: ClassificationResult = {
             threat_type: ThreatType.UNKNOWN,
             mitre_tactics: [],
