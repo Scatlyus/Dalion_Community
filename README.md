@@ -4,127 +4,61 @@
 
 ![Version](https://img.shields.io/badge/version-2.5.0-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
-![Status](https://img.shields.io/badge/status-full--stack--operational-success)
-![Coverage](https://img.shields.io/badge/agents-12%2F12-brightgreen)
+![Status](https://img.shields.io/badge/status-in%20development-blue)
 
 ---
 
 ## 🎯 What is Dalion?
 
-**Dalion is a production-ready SOC (Security Operations Center) in software.** 
+**Dalion is a surgical SOC (Security Operations Center) in software.**
 
-It deploys 9 specialized AI agents that work together to detect threats, predict attack vectors, and respond automatically—stopping damage before it occurs.
+It deploys specialized AI agents that work together to detect threats, predict trajectories, and respond automatically.
 
-> **Validation Status:** Validated on **KC7 Module 1** (20 events) with **85%+ accuracy**. Suricata EVE integration active with calibrated severity escalation.
+> **Validation status:** The automated test suite and local KC7 scenarios can be run using the commands in the installation guide. Results depend on the dataset and configuration used.
 
 **Built for:**
 - 🏥 **Healthcare** (LGPD/HIPAA compliance)
 - 🏦 **Fintech** (Real-time fraud & anomaly detection)
 - 🏢 **Enterprises** (Automated SOC scaling)
 - 🇧🇷 **Brazilian Markets** (Native LGPD-first architecture)
+- 📡 **Telemetry processing** for Suricata EVE events
 
 ---
 
-## � Quick Start
+## 🏗️ Architecture Axioms (ATLAS Protocol)
 
-### Prerequisites
-- **Node.js** ≥ 18
-- **Git**
+Dalion follows the architectural principles below:
 
-### Installation
-```bash
-git clone https://github.com/yourorg/dalion.git
-cd dalion
-npm install
-```
-
-### Run Security Detection Demo
-Validate the vertical analysis between Dalion Intelligence and Arqos Execution:
-```bash
-# Injects Dalion agents into the Arqos Engine
-node tools/bridge_arqos.js
-
-# Runs the vertical detection & orchestration demo
-node tools/demo_vertical.js
-```
-
-### Configuration
-Configure via `.env` file (see `.env.example`):
-```ini
-# Redis Cache (Recommended for Production)
-CACHE_ENABLED=true
-REDIS_URL=redis://localhost:6379
-
-# API Keys
-VT_API_KEY=your_key_here
-ABUSEIPDB_API_KEY=your_key_here
-```
-
-**Expected output:**
-```
-✅ Sentinela: Detected 3 anomalies in SSH logs
-✅ Strategos: Orchestrating response for 'Starter' tier
-✅ Pipeline: Generated containment prompt for Firewall
-```
+- **AX-DLN-001:** Multi-source enrichment using configured intelligence providers.
+- **AX-DLN-002:** Intent-Based Decision Logic (Recon vs. Exploit differentiation).
+- **AX-DLN-003:** Systematic EMI Validation (Mandatory regression testing).
+- **AX-DLN-004:** Stateful Context Isolation (Host-specific trajectories via `DalionStateContext`).
 
 ---
 
-## �️ Core Capabilities
+## 🚀 Performance & Scale
 
-### 12 Specialized Intelligence Agents (v2.5.0)
-
-**Currently Implemented:**
-- **D1 Infantaria (Dn-SEC-INF)** → First-line response (Rate limiting, IP blocks).
-- **D2 Sentinela (Dn-SEC-SNT)** → Real-time anomaly & brute-force detection.
-- **D3 Espionagem (Dn-SEC-ESP)** → APT detection & enrichment via 9 intel sources.
-- **D4 IntelCampo (Dn-SEC-ICA)** → Tactical field intelligence analysis.
-- **D5 Artilharia (Dn-SEC-ART)** → Compliance enforcement (LGPD/NIST) & Mutation Lab.
-- **D6 Diplomacia (Dn-SEC-DIP)** → Executive Communication & Stakeholder Management.
-- **D7 PsySec (Dn-SEC-PSY)** → Behavioral profiling and psychological analysis.
-- **D8 ThreatIntel (Dn-SEC-THR)** → Threat intelligence aggregation and scoring.
-- **D9 AttackGraph (Dn-SEC-GRA)** → Temporal attack graphs & predictive defense.
-- **D10 Ethos (Dn-SEC-ETH)** → Intent classification (Legitimate vs. Malicious).
-- **D11 AfterAction (Dn-SEC-AFT)** → Post-incident learning and feedback loop.
-- **D12 Rottweiler (Dn-SEC-ROT)** → Strategic decision engine (Defensive-only).
-
-> **Status:** Full Stack v2.5.0 implemented. 12/12 agents operational.
-
-### Key Features
-- ⚡ **Ultra-low Latency**: Core logic processing in < 1ms (In-memory benchmarks: ~27k EPS).
-  > **Note on Real-world Performance:** Total end-to-end latency with I/O (JSON parsing, subprocesses) typically averages **200-500ms**.
-- 🧠 **Predictive Defense**: Attack graph generation to stay ahead of adversaries.
-- 🔒 **Sovereign Control**: Runs locally via Arqos Engine (LITE mode) for total data privacy.
-- 📊 **Self-Refining**: AfterAction agent (Dn-SEC-AFT) learns from every incident.
+- ⚡ **Latency and throughput** depend on workload, configuration and external providers.
+- 🏎️ **Stress testing**: run `npx ts-node --transpile-only tools/stress_test_runner.ts <dataset>` to measure the pipeline on your environment.
+- 🧩 **Stateful Intelligence**: Native support for time-series analysis (Cronos) and host trajectories.
 
 ---
 
-### 🛰️ Suricata EVE Adapter (`tools/ingest_suricata_eve.ts`)
-Dalion natively ingests **Suricata EVE JSON** logs, transforming raw network telemetry into actionable defense. This is not a simple wrapper; it's a full-cycle OODA integration.
+## 🛠️ Core Capabilities
 
-- **High-Performance Ingestion:** Optimized streams with `highWaterMark` handling GBs of logs/day.
-- **Closed-Loop System (D11):** Includes **Battle Damage Assessment (BDA)** to verify if blocks were successful and reinforce rules via Active Learning.
-- **Deterministic & Auditable:** 
-  - `--strict`: Fails pipeline if Critical alerts are allowed (Compliance Gate).
-  - `--learn`: Enables persistent rule adjustment based on feedback.
-  - `--limit`: Reproducible regression testing.
+### 12 Specialized Intelligence Agents
 
-**Command:**
-```bash
-npx ts-node tools/ingest_suricata_eve.ts --tail /var/log/suricata/eve.json --strict --learn
-```
+**Highlights:**
+- **D2 Sentinela** → Real-time anomaly & brute-force detection.
+- **D3 Espionagem** → Threat enrichment using multiple sources in sequence.
+- **D10 Ethos** → Intent classification (Legitimate vs. Malicious).
+- **D12 Rottweiler** → Strategic decision engine with **Trajectory Awareness**.
 
-**Recent Improvements (v2.5.0):**
-- ✅ **D12 Suricata Bridge:** `event.severity` from Suricata alerts now directly influences D12 decisions.
-  - `severity=1` (critical) → `ISOLATE_HOST`
-  - `severity=2` (high) → `BLOCK`
-  - `severity=3+` (medium/low) → Standard D12 logic
-- ✅ **TypeScript Hardening:** Fixed compilation errors in `EnrichedIOC` type and optional array handling.
-- ✅ **Real-world Validation:** Tested with testmynids.org GPL ATTACK_RESPONSE alerts (RCE simulation).
-
+---
 
 ## 📦 Product Tiers & Repositories
 
-Dalion está disponível em **3 tiers separados**, cada um com seu próprio repositório Git:
+Dalion está disponível em tiers modulares para diferentes necessidades de escala:
 
 ### 🌱 Community (Open Source)
 **Repository:** [`Dalion_Community`](https://github.com/Scatlyus/Dalion_Community)
@@ -132,19 +66,9 @@ Dalion está disponível em **3 tiers separados**, cada um com seu próprio repo
 | Feature | Spec |
 |---------|------|
 | **Agentes** | 4 agentes (D1, D2, D10, D11) |
-| **EPS Limit** | ∞ Ilimitado (soft warning 5K) |
-| **Features Avançadas** | Nenhuma |
-| **Threat Intel** | Básico (heurísticas locais) |
-| **Attack Prediction** | ❌ |
-| **Response Level** | Alert + Rate Limiting |
-| **Suporte** | Community (GitHub Issues) |
+| **EMI Validation** | ✅ Básico |
+| **Stateful Context** | ❌ (Stateless) |
 | **Ideal para** | Labs, POCs, pequenas redes |
-
-**Agentes Incluídos:**
-- **D1 Infantaria** → First-line response
-- **D2 Sentinela** → Anomaly detection
-- **D10 Ethos** → Intent classification
-- **D11 AfterAction** → Post-incident learning
 
 ---
 

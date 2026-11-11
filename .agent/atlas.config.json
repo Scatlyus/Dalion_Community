@@ -1,0 +1,33 @@
+{
+  "name": "Dalion",
+  "stack": {
+    "language": "TypeScript",
+    "framework": [],
+    "packageManager": "npm"
+  },
+  "scopes": {
+    "allowed": [
+      "src",
+      "lib",
+      "components",
+      "utils"
+    ],
+    "frozen": [
+      ".agent",
+      "node_modules",
+      ".git",
+      "dist",
+      "build"
+    ]
+  },
+  "atlas": {
+    "core_enabled": true,
+    "axel_enabled": true,
+    "solomon_enabled": false
+  },
+  "token_optimization": {
+    "max_context_files": 10,
+    "reuse_axioms": true,
+    "prevent_stubs": true
+  }
+}
