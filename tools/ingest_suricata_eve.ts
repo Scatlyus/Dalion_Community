@@ -68,6 +68,7 @@ async function main() {
     const limitIdx = args.indexOf('--limit');
     const hasStrict = args.indexOf('--strict') !== -1;
     const hasLearn = args.indexOf('--learn') !== -1;
+    const hasMetrics = args.indexOf('--metrics') !== -1;
 
     const limit = limitIdx !== -1 ? Number(args[limitIdx + 1]) : Infinity;
     const filePath = modeFileIdx !== -1 ? args[modeFileIdx + 1] : modeTailIdx !== -1 ? args[modeTailIdx + 1] : null;
@@ -106,7 +107,7 @@ async function main() {
     };
 
     if (hasStdin) {
-        await processStream(process.stdin, agents, { limit, strict: hasStrict, learn: hasLearn });
+        await processStream(process.stdin, agents, { limit, strict: hasStrict, learn: hasLearn, metrics: hasMetrics });
     } else if (modeFileIdx !== -1 && filePath) {
         const fullPath = path.resolve(process.cwd(), filePath);
         if (!fs.existsSync(fullPath)) {
@@ -115,7 +116,7 @@ async function main() {
         }
         // Performance: Use highWaterMark for better memory management with large logs
         const stream = fs.createReadStream(fullPath, { highWaterMark: 64 * 1024 });
-        await processStream(stream, agents, { limit, strict: hasStrict, learn: hasLearn });
+        await processStream(stream, agents, { limit, strict: hasStrict, learn: hasLearn, metrics: hasMetrics });
     } else if (modeTailIdx !== -1 && filePath) {
         console.log(`[Tail] Monitoring ${filePath}...`);
         const isWindows = process.platform === 'win32';
@@ -125,14 +126,14 @@ async function main() {
             : ['-f', filePath];
 
         const tailProcess = spawn(tailCmd, tailArgs);
-        await processStream(tailProcess.stdout, agents, { limit, strict: hasStrict, learn: hasLearn });
+        await processStream(tailProcess.stdout, agents, { limit, strict: hasStrict, learn: hasLearn, metrics: hasMetrics });
     }
 }
 
 async function processStream(
     stream: NodeJS.ReadableStream,
     agents: DalionAgents,
-    opts?: { limit?: number, strict?: boolean, learn?: boolean }
+    opts?: { limit?: number, strict?: boolean, learn?: boolean, metrics?: boolean }
 ) {
     const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
     const limit = opts?.limit ?? Infinity;
@@ -142,6 +143,7 @@ async function processStream(
     const stats: ValidationStats = { total: 0, passed: 0, failed: 0, results: [] };
 
     let count = 0;
+    if (opts?.metrics) console.log(`[DALION_METRICS] ${JSON.stringify({ rss_bytes: process.memoryUsage().rss })}`);
     for await (let line of rl) {
         if (count >= limit) break;
         line = line.trim();
@@ -157,7 +159,9 @@ async function processStream(
 
         try {
             const eve = JSON.parse(sanitizedLine);
+            const started = performance.now();
             await handleEveEvent(eve, agents, strict, learn, stats);
+            if (opts?.metrics) console.log(`[DALION_METRICS] ${JSON.stringify({ latency_ms: performance.now() - started, rss_bytes: process.memoryUsage().rss })}`);
             count++;
         } catch (e: any) {
             console.error(`[Error] Failed to parse EVE line | Length: ${line.length} | Message: ${e.message}`);

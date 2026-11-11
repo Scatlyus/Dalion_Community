@@ -4,7 +4,9 @@
  * Provides deep context on IOCs using internal and (mocked) external feeds.
  */
 
-import { TacticalIntel, IntelCampoConfig } from './types';
+import { TacticalIntel, IntelCampoConfig, FieldIntelReport } from './types';
+import { SecurityEvent } from '../d2_sentinela/types';
+import { isIP } from 'net';
 
 export class DalionIntelCampo {
     private config: IntelCampoConfig;
@@ -16,6 +18,53 @@ export class DalionIntelCampo {
             enable_external_feeds: config?.enable_external_feeds || false
         };
         this.intelMap = this.initializeIntel();
+    }
+
+    /**
+     * Correlaciona eventos por subnet para detectar ataques distribuídos (Field Intelligence)
+     */
+    public analyzeField(events: SecurityEvent[]): FieldIntelReport | undefined {
+        if (events.length === 0) return undefined;
+
+        // Extrai subnet (simplificado para os 3 primeiros octetos)
+        const getSubnet = (ip: string) => ip.split('.').slice(0, 3).join('.');
+        const subnetMap = new Map<string, SecurityEvent[]>();
+
+        events.forEach(ev => {
+            if (isIP(ev.source_ip) !== 4) return;
+            const sn = getSubnet(ev.source_ip);
+            const list = subnetMap.get(sn) || [];
+            list.push(ev);
+            subnetMap.set(sn, list);
+        });
+
+        // Prefer a correlated subnet over unrelated high-volume traffic.
+        let topSubnet = '';
+        let maxEvents = 0;
+        let hasCorrelation = false;
+        subnetMap.forEach((evs, sn) => {
+            const correlated = evs.length >= 3 && new Set(evs.map(e => e.source_ip)).size >= 2 && evs.some(e => e.severity === 'high' || e.severity === 'critical');
+            if ((correlated && !hasCorrelation) || (correlated === hasCorrelation && evs.length > maxEvents)) {
+                maxEvents = evs.length;
+                topSubnet = sn;
+                hasCorrelation = correlated;
+            }
+        });
+
+        if (!topSubnet) return undefined;
+
+        const subnetEvents = subnetMap.get(topSubnet) || [];
+        const anomalyCount = subnetEvents.filter(e => e.severity === 'high' || e.severity === 'critical').length;
+        const targets = [...new Set(subnetEvents.map(e => e.destination_ip!).filter(Boolean))];
+
+        return {
+            subnet: topSubnet,
+            event_count: maxEvents,
+            anomaly_ratio: maxEvents > 0 ? anomalyCount / maxEvents : 0,
+            top_targets: targets.slice(0, 3),
+            correlation_detected: hasCorrelation,
+            timestamp: new Date().toISOString()
+        };
     }
 
     /**

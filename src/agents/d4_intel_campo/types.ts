@@ -26,6 +26,15 @@ export interface AttributionInfo {
     aliases?: string[];
 }
 
+export interface FieldIntelReport {
+    subnet: string;
+    event_count: number;
+    anomaly_ratio: number;
+    top_targets: string[];
+    correlation_detected: boolean;
+    timestamp: string;
+}
+
 export interface IntelCampoConfig {
     min_confidence: number;
     enable_external_feeds: boolean; // Lab: usually false/mocked
