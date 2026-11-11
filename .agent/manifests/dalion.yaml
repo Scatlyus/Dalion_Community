@@ -1,0 +1,9 @@
+version: "1.0.0"
+project: dalion
+agents:
+  - id: ethos
+    name: Dalion Ethos
+    source: .agent/agents/Dalion_Ethos_Dn-SEC-ETH_3.0.0.yaml
+  - id: rottweiler
+    name: Dalion Rottweiler
+    source: .agent/agents/Dalion_Rottweiler_Dn-SEC-ROT_2.0.0.yaml

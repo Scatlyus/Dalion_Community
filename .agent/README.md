@@ -18,7 +18,8 @@ atlas status           # Show project health
 - Axioms: Reusable patterns are stored in .agent/axioms/
 - Logs: Session history in .agent/logs/
 - Handshake: Mandatory briefing prevents token waste
-- Master Skills Protocol: Aggregated expertise for complex routing (see `governance/protocols/`)
+- Project context: see [Dalion overview](../docs/00-overview.md).
+- Dalion agent references: see [the local manifest](manifests/dalion.yaml). Cross-project manifests and protocols are local reference material, not Dalion configuration.
 
 ## Frozen Paths
 

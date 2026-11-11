@@ -1,0 +1,15 @@
+# Local execution artifacts
+__pycache__/
+*.pyc
+/.agent/logs/
+/.agent/scripts/test_results/
+/.agent/genevolution/.atlas/
+
+# Cross-project references retained locally, not part of Dalion
+/.agent/manifests/agents.yaml
+/.agent/axioms/AX-VL-001_fallback_governance.md
+/.agent/protocol/solomon_orchestration.yaml
+/.agent/protocol/ae_lite_validation_suite.yaml
+
+# Third-party reference PDFs require individual distribution review
+/Rag/**/*.pdf
