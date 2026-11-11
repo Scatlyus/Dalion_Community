@@ -1,0 +1,10 @@
+const fs = require('fs');
+const events = [
+    { timestamp: "2026-02-13T17:50:00.000Z", event_type: "alert", src_ip: "10.0.4.100", dest_ip: "45.133.1.25", alert: { signature: "ET TROJAN Beaconing", severity: 1 } },
+    { timestamp: "2026-02-13T17:50:05.000Z", event_type: "dns", src_ip: "10.0.4.101", dest_ip: "8.8.8.8", dns: { query: [{ rrname: "google.com" }] } },
+    { timestamp: "2026-02-13T17:50:10.000Z", event_type: "http", src_ip: "10.0.4.102", dest_ip: "185.123.45.67", http: { hostname: "evil.com", url: "/malware.exe", http_content_type: "application/octet-stream" } },
+    { timestamp: "2026-02-13T17:50:15.000Z", event_type: "alert", src_ip: "10.0.4.103", dest_ip: "192.168.1.50", alert: { signature: "ET RANSOMWARE Wannacry", severity: 1 } }
+];
+const outputPath = process.argv[2] || 'sample_eve.generated.json';
+fs.writeFileSync(outputPath, events.map(e => JSON.stringify(e)).join('\n') + '\n', { flag: 'wx' });
+console.log(`${outputPath} generated successfully.`);
