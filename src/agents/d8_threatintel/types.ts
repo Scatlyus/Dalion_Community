@@ -23,3 +23,11 @@ export interface IntelHubStatus {
     total_signals_indexed: number;
     last_update: string;
 }
+
+export interface ThreatScore {
+    average_score: number;
+    weighted_score: number;
+    confidence: number;
+    sources_count: number;
+    timestamp: string;
+}

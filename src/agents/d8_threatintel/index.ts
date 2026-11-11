@@ -1,4 +1,5 @@
-import { ThreatIntelSignal, D8Config, IntelSource, IntelHubStatus } from './types';
+import { ThreatIntelSignal, D8Config, IntelSource, IntelHubStatus, ThreatScore } from './types';
+import { EnrichedIOC } from '../d3_espionagem/types';
 
 export class DalionThreatIntel {
     private signals: Map<string, ThreatIntelSignal[]> = new Map();
@@ -9,6 +10,38 @@ export class DalionThreatIntel {
             enabled_sources: config?.enabled_sources || ['internal_research'],
             min_confidence: config?.min_confidence || 0.6,
             auto_refresh_interval_ms: config?.auto_refresh_interval_ms || 3600000
+        };
+    }
+
+    /**
+     * Agrega múltiplos resultados de enriquecimento para gerar um score consolidado
+     */
+    public aggregate(sources: EnrichedIOC[]): ThreatScore {
+        if (sources.length === 0) {
+            return { average_score: 0, weighted_score: 0, confidence: 0, sources_count: 0, timestamp: new Date().toISOString() };
+        }
+
+        const first = sources[0];
+        if (sources.some(s => s.ioc_type !== first.ioc_type || s.ioc_value !== first.ioc_value)) {
+            throw new Error('Cannot aggregate results for different IOCs');
+        }
+
+        let totalScore = 0;
+        let weightedScore = 0;
+        let totalConfidence = 0;
+
+        sources.forEach(s => {
+            totalScore += s.threat_score;
+            weightedScore += (s.threat_score * s.confidence);
+            totalConfidence += s.confidence;
+        });
+
+        return {
+            average_score: totalScore / sources.length,
+            weighted_score: totalConfidence > 0 ? weightedScore / totalConfidence : 0,
+            confidence: totalConfidence / sources.length,
+            sources_count: sources.length,
+            timestamp: new Date().toISOString()
         };
     }
 
